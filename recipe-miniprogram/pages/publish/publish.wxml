@@ -1,0 +1,141 @@
+<wxs module="cn">
+// 1-10 用中文数字；超出回退"第 N 步"，避免超过 10 后无法读
+var CN = ['一','二','三','四','五','六','七','八','九','十'];
+module.exports = {
+  stepCN: function(n) {
+    if (n < 1) return '';
+    if (n <= 10) return '步骤' + CN[n-1];
+    return '第' + n + '步';
+  }
+};
+</wxs>
+
+<view class="page theme-{{theme}} bg-{{skinBg}}" style="{{bgStyle}}">
+  <nav-bar title="{{navTitle}}" theme="{{theme}}" />
+  <view class="page-content form-content">
+  <!-- 编辑模式横幅 -->
+  <view class="edit-banner" wx:if="{{editId}}">
+    <text class="edit-banner-text">✎ 正在编辑{{editTitle ? '「' + editTitle + '」' : '菜谱'}}</text>
+    <text class="edit-banner-exit" bindtap="exitEdit">退出编辑</text>
+  </view>
+  <view class="card">
+    <view class="label">菜谱标题 *</view>
+    <input class="input" placeholder="例如：红烧排骨" bindinput="onTitle" value="{{title}}" />
+    <view class="label">几人份（选填，用于计算每份热量）</view>
+    <input class="input" type="number" placeholder="如：2" bindinput="onServings" value="{{servings}}" />
+    <view class="label">展示图（最多 {{maxCovers}} 张，第一张为主图）</view>
+    <view class="cover-grid">
+      <view class="cover-cell" wx:for="{{covers}}" wx:key="*this">
+        <image class="cover-img" src="{{item}}" mode="aspectFill" lazy-load data-idx="{{index}}" bindtap="onPreviewCover" />
+        <view class="cover-del" data-idx="{{index}}" catchtap="onRemoveCover">✕</view>
+      </view>
+      <view class="cover-cell cover-add" wx:if="{{covers.length < maxCovers}}" bindtap="onChooseCovers">
+        <text class="cover-ph">＋</text>
+        <text class="cover-ph-tip">添加图片</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="card">
+    <view class="section-title">
+      <view class="sec-left">食材 <text class="sec-tip">按克计量 · 自动计算热量</text></view>
+      <text class="add" bindtap="addIngredient">+ 添加</text>
+    </view>
+    <block wx:for="{{ingredients}}" wx:key="index">
+      <view class="ing-row">
+        <input class="input ing-name" placeholder="名称，如：番茄" data-idx="{{index}}" data-key="name" bindinput="onIngredient" value="{{item.name}}" />
+        <view class="ing-grams">
+          <input class="input grams-input" type="digit" placeholder="克数" data-idx="{{index}}" data-key="grams" bindinput="onIngredient" value="{{item.grams}}" />
+          <text class="grams-unit">克</text>
+        </view>
+        <text class="del" data-idx="{{index}}" bindtap="removeIngredient">✕</text>
+      </view>
+      <!-- 食材名称联想（命中热量库，点选回填） -->
+      <view class="suggest-wrap" wx:if="{{suggestFor === index && suggests.length}}">
+        <view class="suggest-chip" wx:for="{{suggests}}" wx:for-item="s" wx:key="foodCalorieId"
+              data-idx="{{suggestFor}}" data-name="{{s.matchedName}}" bindtap="pickSuggest">
+          <text class="sg-name">{{s.matchedName}}</text>
+          <text class="sg-cal">{{s.caloriesPer100}}千卡/100克</text>
+        </view>
+      </view>
+    </block>
+  </view>
+
+  <view class="card">
+    <view class="section-title">
+      <view class="sec-left">调料 <text class="sec-tip">不计入热量 · 用量可自由填写</text></view>
+      <text class="add" bindtap="addSeasoning">+ 添加</text>
+    </view>
+    <view class="ing-row" wx:for="{{seasonings}}" wx:key="index">
+      <input class="input ing-name" placeholder="名称，如：食用油" data-idx="{{index}}" data-key="name" bindinput="onSeasoning" value="{{item.name}}" />
+      <input class="input ing-amount" placeholder="用量，如：一勺 / 少许" data-idx="{{index}}" data-key="amount" bindinput="onSeasoning" value="{{item.amount}}" />
+      <text class="del" data-idx="{{index}}" bindtap="removeSeasoning">✕</text>
+    </view>
+  </view>
+
+  <view class="card">
+    <view class="section-title">烹饪步骤</view>
+    <view class="step-item" wx:for="{{steps}}" wx:key="index">
+      <view class="step-box">
+        <view class="step-head">
+          <view class="step-badge">{{cn.stepCN(index + 1)}}</view>
+        </view>
+        <!-- 大图上传区：无图时大虚线框，有图显示大图 -->
+        <view class="step-img-box {{item.image ? 'has' : ''}}" data-idx="{{index}}" bindtap="onStepImage">
+          <image wx:if="{{item.image}}" class="step-img" src="{{item.image}}" mode="aspectFill" lazy-load />
+          <view wx:else class="step-img-ph">
+            <text class="step-img-plus">＋</text>
+            <text class="step-img-tip">上传步骤图</text>
+          </view>
+        </view>
+        <!-- 详细描述 -->
+        <textarea class="input step-text" placeholder="详细描述这一步怎么做…" data-idx="{{index}}" data-key="text" bindinput="onStep" value="{{item.text}}" />
+        <!-- 使用酌料 -->
+        <input class="input step-seasoning" placeholder="使用酌料，如：盐、生抽（可留空）" data-idx="{{index}}" data-key="seasoning" bindinput="onStep" value="{{item.seasoning}}" />
+        <view class="step-tools">
+          <input class="input step-time" type="number" placeholder="建议时长(分钟)" data-idx="{{index}}" data-key="durationSec" bindinput="onStep" value="{{item.durationSec}}" />
+        </view>
+        <!-- 删除：单独一行放最下面，点击弹窗确认 -->
+        <view class="step-del-row" data-idx="{{index}}" bindtap="removeStep">删除此步骤</view>
+      </view>
+    </view>
+    <view class="step-add" bindtap="addStep">
+      <text class="step-add-plus">＋</text>
+      <text>添加步骤</text>
+    </view>
+  </view>
+
+  <view class="card">
+    <view class="section-title">可见范围</view>
+    <view class="vis-btns">
+      <view class="vis-btn {{visibility === 'PRIVATE' ? 'active' : ''}}" data-v="PRIVATE" bindtap="onPickVis">私密菜单</view>
+      <view class="vis-btn {{visibility === 'PUBLIC' ? 'active' : ''}}" data-v="PUBLIC" bindtap="onPickVis">发布到广场</view>
+      <view class="vis-btn {{visibility === 'FAMILY' ? 'active' : ''}}" data-v="FAMILY" bindtap="onPickVis">分享到队伍</view>
+    </view>
+    <!-- 队伍分享设置：全部队伍 或 指定队伍多选 -->
+    <view class="share-teams" wx:if="{{visibility === 'FAMILY'}}">
+      <view class="share-all" bindtap="toggleShareAll">
+        <view class="sa-check {{shareAll ? 'on' : ''}}">✓</view>
+        <view class="sa-main">
+          <view class="sa-name">分享到全部队伍</view>
+          <view class="sa-desc">你加入的所有队伍都能看到</view>
+        </view>
+      </view>
+      <view class="team-chips" wx:if="{{!shareAll}}">
+        <view class="team-chip {{selectedFamilyMap[item.family.id] ? 'on' : ''}}"
+              wx:for="{{families}}" wx:key="family.id"
+              data-id="{{item.family.id}}" bindtap="toggleFamily">
+          {{item.family.name}}
+        </view>
+        <view class="chips-empty" wx:if="{{families.length === 0}}">还没有队伍，去队伍页创建</view>
+      </view>
+      <view class="vis-tip" wx:if="{{!shareAll && chosenFamilyIds.length > 0}}">将分享到 {{chosenFamilyIds.length}} 个队伍</view>
+    </view>
+  </view>
+
+  <view class="footer">
+    <button class="btn btn-plain draft" bindtap="onSaveDraft">{{editId ? '存为草稿' : '存草稿'}}</button>
+    <button class="btn btn-primary" bindtap="onPublish" loading="{{submitting}}">{{editId ? '保存更新' : '发布'}}</button>
+  </view>
+  </view>
+</view>

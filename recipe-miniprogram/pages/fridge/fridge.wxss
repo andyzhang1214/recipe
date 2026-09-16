@@ -1,0 +1,254 @@
+/* 冰箱 */
+.page-content { padding-bottom: 260rpx; }
+
+/* 临期提醒横幅 */
+.alert-bar {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  background: var(--warn-weak);
+  border-radius: var(--radius-md);
+  padding: 22rpx 28rpx;
+  margin: 8rpx 0 24rpx;
+}
+.alert-bar.danger { background: var(--danger-weak); }
+.alert-dot {
+  width: 18rpx;
+  height: 18rpx;
+  border-radius: 50%;
+  background: var(--warn);
+  flex-shrink: 0;
+  animation: pulse 1.6s ease infinite;
+}
+.alert-bar.danger .alert-dot { background: var(--danger); }
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
+}
+.alert-text { font-size: 26rpx; color: var(--text); flex: 1; line-height: 1.5; }
+.alert-strong { font-weight: 700; color: var(--warn); }
+.alert-bar.danger .alert-strong { color: var(--danger); }
+.alert-press { opacity: 0.75; }
+.alert-action {
+  flex-shrink: 0;
+  font-size: 24rpx;
+  font-weight: 600;
+  color: var(--warn);
+}
+.alert-bar.danger .alert-action { color: var(--danger); }
+
+/* 临期标签：选中时以警示色高亮区分普通分类 */
+.cf-chip.urgent.on { background: var(--warn); color: #fff; }
+
+/* 分类筛选：全部 + 各分类，横向滑动 */
+.cat-filter {
+  white-space: nowrap;
+  width: 100%;
+  margin: 0 0 24rpx;
+}
+.cf-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 13rpx 32rpx;
+  border-radius: var(--radius-tag);
+  background: var(--card, #fff);
+  color: var(--sub);
+  font-size: 26rpx;
+  font-weight: 500;
+  border: 2rpx solid var(--border);
+  margin-right: 16rpx;
+}
+.cf-chip.on {
+  background: var(--accent-grad);
+  color: var(--btn-text, #fff);
+  font-weight: 600;
+  border-color: transparent;
+  box-shadow: 0 6rpx 18rpx var(--glow);
+}
+.cf-press { opacity: 0.75; }
+/* 食材卡片网格：双列卡片，替代行式列表 */
+/* 不用 gap：calc(50%-12rpx)+gap=恰好100%，实机亚像素舍入会把第二张卡挤成单列（广场页同款坑），space-between 吸收余量 */
+.fg-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+.fg-card {
+  width: calc(50% - 12rpx);
+  margin-bottom: 24rpx;
+  box-sizing: border-box;
+  background: var(--card);
+  border-radius: var(--radius-card);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  border: var(--card-outline);
+}
+.fg-press { transform: scale(0.97); opacity: 0.85; }
+/* 封面区：照片 / 分类 emoji 占位，状态标 + 删除悬浮其上 */
+.fg-photo-box {
+  position: relative;
+  width: 100%;
+  height: 220rpx;
+  background: var(--fill);
+}
+.fg-photo { width: 100%; height: 100%; display: block; }
+.fg-emoji {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 88rpx;
+  background: var(--accent-grad-soft);
+}
+.fg-status {
+  position: absolute;
+  top: 16rpx;
+  left: 16rpx;
+  display: inline-flex;
+  align-items: center;
+  gap: 8rpx;
+  padding: 7rpx 18rpx;
+  border-radius: 999rpx;
+  font-size: 22rpx;
+  font-weight: 600;
+  backdrop-filter: blur(8rpx);
+}
+.fg-status-dot { width: 11rpx; height: 11rpx; border-radius: 50%; }
+.s-red { background: rgba(209, 73, 60, 0.92); color: #fff; } .s-red .fg-status-dot { background: #fff; }
+.s-orange { background: rgba(240, 162, 60, 0.94); color: #fff; } .s-orange .fg-status-dot { background: #fff; }
+.s-green { background: rgba(78, 138, 78, 0.92); color: #fff; } .s-green .fg-status-dot { background: #fff; }
+.s-gray { background: rgba(120, 100, 80, 0.85); color: #fff; } .s-gray .fg-status-dot { background: #fff; }
+.fg-del {
+  position: absolute;
+  top: 16rpx;
+  right: 16rpx;
+  font-size: 21rpx;
+  font-weight: 500;
+  color: var(--danger);
+  background: rgba(255, 255, 255, 0.92);
+  border-radius: 999rpx;
+  padding: 7rpx 18rpx;
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.12);
+}
+.fg-body { padding: 22rpx 24rpx 26rpx; }
+.fg-name {
+  font-size: 30rpx;
+  font-weight: 700;
+  color: var(--text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.fg-meta { font-size: 23rpx; color: var(--sub); margin-top: 10rpx; }
+.fg-note {
+  font-size: 22rpx;
+  color: var(--text);
+  margin-top: 8rpx;
+  opacity: 0.65;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.add-btn {
+  position: fixed;
+  bottom: calc(60rpx + env(safe-area-inset-bottom));
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--accent-grad);
+  color: var(--btn-text);
+  padding: 24rpx 72rpx;
+  border-radius: var(--radius-btn);
+  box-shadow: 0 16rpx 40rpx var(--glow);
+  z-index: 10;
+  font-size: 31rpx;
+  font-weight: 600;
+  letter-spacing: 1rpx;
+}
+
+.sheet-title { font-size: 34rpx; font-weight: 700; color: var(--text); text-align: center; margin-bottom: 28rpx; }
+.sheet-label { font-size: 26rpx; color: var(--sub); margin: 28rpx 0 16rpx; font-weight: 500; }
+.sheet-btn { width: 100%; margin-top: 40rpx; }
+.cats { display: flex; flex-wrap: wrap; gap: 16rpx; }
+.cat { padding: 12rpx 34rpx; border-radius: var(--radius-tag); background: var(--fill); color: var(--sub); font-size: 27rpx; font-weight: 500; border: 2rpx solid transparent; }
+.cat.active { background: var(--accent-grad); color: var(--btn-text); font-weight: 600; box-shadow: 0 6rpx 18rpx var(--glow); }
+.row { display: flex; gap: 16rpx; }
+.col { flex: 1; }
+.radio { margin-right: 44rpx; font-size: 28rpx; color: var(--text); }
+.note-row { display: flex; align-items: center; gap: 16rpx; }
+.note-input { flex: 1; }
+.photo-btn { font-size: 26rpx; color: var(--accent); padding: 16rpx 28rpx; border: 2rpx dashed var(--accent); border-radius: var(--radius-md); flex-shrink: 0; font-weight: 500; background: var(--accent-grad-soft); }
+.photo-thumb { width: 110rpx; height: 110rpx; border-radius: var(--radius-md); flex-shrink: 0; }
+
+/* ---- 功能入口行：邀请共用 / 共享给我的 / 操作记录 ---- */
+.fr-tools {
+  display: flex;
+  gap: 16rpx;
+  margin-bottom: 24rpx;
+}
+.fr-tool {
+  flex: 1;
+  background: var(--card);
+  border: 2rpx solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 22rpx 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10rpx;
+  box-shadow: var(--shadow-sm);
+}
+.fr-tool-press { transform: scale(0.96); opacity: 0.85; }
+.fr-tool-icon { font-size: 36rpx; line-height: 1; }
+.fr-tool-text { font-size: 24rpx; color: var(--text); font-weight: 600; }
+
+/* ---- 邀请弹层：卡片/分段/票据样式统一在 app.wxss（与队伍页共用） ---- */
+
+/* ---- 操作记录弹层 ---- */
+.log-list { max-height: 640rpx; overflow-y: auto; }
+.log-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 20rpx;
+  padding: 20rpx 0;
+  border-bottom: 2rpx solid var(--border);
+}
+.log-item:last-child { border-bottom: none; }
+.log-avatar-box { flex-shrink: 0; }
+.log-avatar {
+  width: 72rpx;
+  height: 72rpx;
+  border-radius: 50%;
+  display: block;
+}
+.log-avatar.ph {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 30rpx;
+  font-weight: 600;
+  color: var(--accent);
+  background: var(--accent-grad-soft);
+}
+.log-main { flex: 1; min-width: 0; }
+.log-text { font-size: 26rpx; color: var(--text); line-height: 1.5; }
+.log-op { font-weight: 700; margin-right: 8rpx; }
+.log-action { margin-right: 8rpx; color: var(--sub); }
+.log-action.add { color: var(--ok); }
+.log-action.del { color: var(--danger); }
+.log-item-name { font-weight: 600; }
+.log-meta { font-size: 22rpx; color: var(--sub); margin-top: 8rpx; }
+
+/* ---- 共享冰箱列表弹层 ---- */
+.shared-list { max-height: 640rpx; overflow-y: auto; }
+.shared-item {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+  padding: 24rpx 0;
+  border-bottom: 2rpx solid var(--border);
+}
+.shared-item:last-child { border-bottom: none; }
+.chevron { color: var(--sub); font-size: 40rpx; opacity: 0.5; flex-shrink: 0; }

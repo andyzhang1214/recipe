@@ -1,0 +1,226 @@
+<view class="page theme-{{theme}} bg-{{skinBg}}" style="{{bgStyle}}">
+  <nav-bar title="{{navTitle}}" back="{{true}}" theme="{{theme}}" />
+  <block wx:if="{{family}}">
+  <!-- 顶部横幅：粉彩渐变贴纸 + 头像/人数 + 集成功能按钮（队伍名在导航栏，邀请码走邀请面板） -->
+  <view class="cd-hero">
+    <view class="cd-hero-deco d1"></view>
+    <view class="cd-hero-deco d2"></view>
+    <view class="cd-hero-row">
+      <view class="cd-avatar-box">
+        <image wx:if="{{family.avatar}}" class="cd-avatar" src="{{family.avatar}}" mode="aspectFill" />
+        <view wx:else class="cd-avatar cd-avatar-ph">队</view>
+        <view class="cd-role-badge">{{myRole === 'OWNER' ? '群主' : (myRole === 'ADMIN' ? '管理员' : '成员')}}</view>
+      </view>
+      <view class="cd-hero-info">
+        <view class="cd-count">
+          <text class="cd-count-icon">👥</text>
+          <text class="cd-count-num">{{family.memberCount}}</text>
+          <text class="cd-count-cap">/{{family.maxMembers}} 位成员</text>
+        </view>
+        <view class="cd-hero-bar">
+          <view class="cd-hero-bar-in" style="width: {{memPct}}%;"></view>
+        </view>
+      </view>
+    </view>
+    <!-- 功能按钮集成进 banner：邀请成员 / 食材管理 / 队伍设置 -->
+    <view class="cd-hero-divider"></view>
+    <view class="cd-hero-acts">
+      <view class="cd-act main" hover-class="cd-act-press" bindtap="openInvite">
+        <text class="cd-act-ic">💌</text>
+        <text class="cd-act-tx">邀请成员</text>
+      </view>
+      <view class="cd-act" hover-class="cd-act-press" bindtap="goFridge">
+        <text class="cd-act-ic">🧊</text>
+        <text class="cd-act-tx">食材管理</text>
+      </view>
+      <view class="cd-act" wx:if="{{myRole === 'OWNER' || myRole === 'ADMIN'}}" hover-class="cd-act-press" bindtap="openSettings">
+        <text class="cd-act-ic">⚙️</text>
+        <text class="cd-act-tx">队伍设置</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 心愿单：待完成可去完成/去学；已完成的展示菜谱入口 -->
+  <view class="card">
+    <view class="wish-head">
+      <view class="wish-title"><text class="wish-dot"></text>心愿单</view>
+      <view class="wish-add" bindtap="openMealForm">＋ 许愿</view>
+    </view>
+    <view class="wish-item {{m.status === 'DONE' ? 'done' : ''}}" wx:for="{{meals}}" wx:key="id" wx:for-item="m">
+      <view class="wish-info" data-rid="{{m.recipeId || ''}}" data-status="{{m.status}}" bindtap="onWishInfoTap">
+        <view class="wish-dish">{{m.dishName}}</view>
+        <view class="wish-by">
+          {{m.userName}}{{m.mine ? '（我）' : ''}} 想吃
+          <text class="wish-done-tag" wx:if="{{m.status === 'DONE'}}">✓ 菜谱已发布</text>
+        </view>
+        <view class="wish-note" wx:if="{{m.note}}">备注：{{m.note}}</view>
+      </view>
+      <view class="wish-ops" wx:if="{{m.status === 'PENDING'}}">
+        <button class="wish-btn go" data-id="{{m.id}}" data-dish="{{m.dishName}}" bindtap="goComplete">去完成</button>
+        <button class="wish-btn skip" data-id="{{m.id}}" bindtap="toLearning">我去学</button>
+      </view>
+      <view class="wish-ops" wx:else>
+        <button wx:if="{{m.recipeId}}" class="wish-btn view" data-rid="{{m.recipeId}}" catchtap="onDoneRecipeTap">查看菜谱</button>
+      </view>
+    </view>
+    <view class="empty small" wx:if="{{meals.length === 0}}">
+      <text class="empty-icon">🍜</text>
+      还没有心愿，点「＋ 许愿」告诉大家你想吃什么
+    </view>
+  </view>
+
+  <!-- 圈员菜品：圈内可见 + 成员公开发布 -->
+  <view class="card">
+    <view class="wish-head">
+      <view class="wish-title"><text class="wish-dot"></text>圈员菜品</view>
+    </view>
+    <view class="fr-item" wx:for="{{recipes}}" wx:key="id" wx:for-item="r"
+          data-id="{{r.id}}" bindtap="onRecipeTap" hover-class="pressed">
+      <image class="fr-cover" src="{{r.cover || (r.covers && r.covers[0])}}" mode="aspectFill" />
+      <view class="fr-info">
+        <view class="fr-title">{{r.title}}</view>
+        <view class="fr-meta">{{r.authorNickname || '圈员'}} · {{r.visibility === 'PUBLIC' ? '公开' : '圈内可见'}}</view>
+      </view>
+      <view class="chevron">›</view>
+    </view>
+    <view class="empty small" wx:if="{{recipes.length === 0}}">
+      <text class="empty-icon">🍳</text>
+      还没有圈员菜品，去发布一道吧
+    </view>
+  </view>
+
+  <!-- 待审成员 -->
+  <view class="card" wx:if="{{pendingCount > 0}}">
+    <view class="sheet-title">待审批（{{pendingCount}}）</view>
+    <view class="member" wx:for="{{members}}" wx:key="memberId" wx:if="{{item.status === 'PENDING'}}">
+      <view class="m-avatar-box">
+        <image wx:if="{{item.avatar}}" class="m-avatar-img" src="{{item.avatar}}" mode="aspectFill" />
+        <view wx:else class="m-avatar">{{item.avatarChar || '友'}}</view>
+      </view>
+      <view class="m-main">
+        <view class="m-name">{{item.nickname || '用户' + item.userId}}</view>
+      </view>
+      <view class="m-ops">
+        <text class="op ok" data-member-id="{{item.memberId}}" bindtap="onApprove">通过</text>
+        <text class="op no" data-member-id="{{item.memberId}}" bindtap="onReject">拒绝</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 成员列表（仅正式成员；待审只在上方待审批区展示，避免重复出现） -->
+  <view class="card">
+    <view class="sheet-title">成员（{{approvedCount}}）</view>
+    <view class="member" wx:for="{{members}}" wx:key="memberId" wx:if="{{item.status === 'APPROVED'}}">
+      <view class="m-avatar-box">
+        <image wx:if="{{item.avatar}}" class="m-avatar-img" src="{{item.avatar}}" mode="aspectFill" />
+        <view wx:else class="m-avatar">{{item.avatarChar || '友'}}</view>
+      </view>
+      <view class="m-main">
+        <view class="m-name">
+          {{item.nickname || '用户' + item.userId}}
+          <text class="tag tag-blue" wx:if="{{item.role === 'OWNER'}}">群主</text>
+          <text class="tag tag-orange" wx:if="{{item.role === 'ADMIN'}}">管理员</text>
+        </view>
+      </view>
+      <view class="m-ops" wx:if="{{myRole === 'OWNER' || myRole === 'ADMIN'}}">
+        <text class="op no" wx:if="{{item.role !== 'OWNER'}}" data-member-id="{{item.memberId}}" bindtap="onRemove">移出</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 邀请管理 -->
+  <view class="card">
+    <view class="sheet-title">邀请记录（分享卡片/二维码）</view>
+    <view class="invite" wx:for="{{invites}}" wx:key="id">
+      <view class="i-info">
+        <view class="i-token">{{item.token}}</view>
+        <view class="i-meta">{{item.type === 'QR_CODE' ? '二维码' : '分享卡片'}} · {{item.validDays}}天 · {{item.status === 'ACTIVE' ? '生效中' : '已作废'}}</view>
+      </view>
+      <text class="op no" data-invite-id="{{item.id}}" bindtap="onRevoke">作废</text>
+    </view>
+    <view class="empty" wx:if="{{invites.length === 0}}">暂无邀请，点上方「邀请成员」创建</view>
+  </view>
+
+  <!-- 许愿弹层 -->
+  <view class="mask" wx:if="{{showMealForm}}" bindtap="closeMealForm" />
+  <view class="sheet" wx:if="{{showMealForm}}">
+    <view class="sheet-title">许个愿</view>
+    <view class="sheet-label">想吃什么 *</view>
+    <input class="input" placeholder="如：红烧排骨 / 可乐鸡翅" bindinput="onMealDish" value="{{mealDish}}" />
+    <view class="sheet-label">备注（可选）</view>
+    <input class="input" placeholder="口味、忌口等" bindinput="onMealNote" value="{{mealNote}}" />
+    <button class="btn btn-primary" bindtap="confirmMeal" loading="{{mealSubmitting}}">许愿</button>
+  </view>
+
+  <!-- 邀请成员弹层：生成邀请码 / 分享到微信 二选一 -->
+  <view class="mask" wx:if="{{showInvite}}" bindtap="closeInvite" />
+  <view class="sheet" wx:if="{{showInvite}}">
+    <view class="sheet-title">邀请成员</view>
+    <view class="sheet-sub">邀请加入「{{family.name || '我的队伍'}}」，无需审批</view>
+
+    <!-- 方式一：生成邀请码（点击展开有效期与生成） -->
+    <view class="inv-card" hover-class="inv-press" bindtap="toggleCodeMode">
+      <view class="inv-ic">🔗</view>
+      <view class="inv-main">
+        <view class="inv-name">生成邀请码</view>
+        <view class="inv-desc">有效期可选，凭码直接加入</view>
+      </view>
+      <view class="inv-chev {{showCodeGen ? 'open' : ''}}" />
+    </view>
+
+    <view class="inv-panel" wx:if="{{showCodeGen}}">
+      <view class="inv-panel-row">
+        <text class="inv-panel-label">有效期</text>
+        <view class="seg">
+          <view class="seg-item {{inviteValidDays === 1 ? 'active' : ''}}" data-days="1" catchtap="onSegDays">1天</view>
+          <view class="seg-item {{inviteValidDays === 7 ? 'active' : ''}}" data-days="7" catchtap="onSegDays">7天</view>
+          <view class="seg-item {{inviteValidDays === 30 ? 'active' : ''}}" data-days="30" catchtap="onSegDays">30天</view>
+        </view>
+      </view>
+      <button class="btn btn-primary inv-gen" bindtap="genInvite" loading="{{inviteCreating}}">生成邀请码</button>
+      <view class="ticket" wx:if="{{inviteToken}}" hover-class="ticket-press" bindtap="copyInviteToken">
+        <view class="tk-code">{{inviteToken}}</view>
+        <view class="tk-meta">有效期至 {{inviteExpires}}</view>
+        <view class="tk-hint">点击复制</view>
+      </view>
+    </view>
+
+    <!-- 方式二：分享到微信（直接分享队伍，打开即加入）
+         分享必须用原生 button，但 button 的 UA 样式在真机上无法彻底驯服（多轮竞胜失败），
+         故采用覆盖层模式：view 承担卡片外形，button 只做铺满卡片的透明点击层 -->
+    <view class="inv-card">
+      <view class="inv-ic">💬</view>
+      <view class="inv-main">
+        <view class="inv-name">分享到微信</view>
+        <view class="inv-desc">发送卡片给好友，点开即直接加入</view>
+      </view>
+      <view class="inv-go" />
+      <button class="inv-share-btn" open-type="share" hover-class="inv-press" />
+    </view>
+  </view>
+
+  <!-- 设置弹层：改头像/名称/上限 + 解散队伍 -->
+  <view class="mask" wx:if="{{showSettings}}" bindtap="closeSettings" />
+  <view class="sheet" wx:if="{{showSettings}}">
+      <view class="sheet-title">队伍设置</view>
+      <view class="sheet-label">队伍头像（点击更换）</view>
+      <view class="av-picker" bindtap="onPickFamilyAvatar">
+        <image wx:if="{{editAvatar}}" class="av-img" src="{{editAvatar}}" mode="aspectFill" />
+        <view wx:else class="av-ph">
+          <text class="av-plus">＋</text>
+          <text class="av-tip">选图片</text>
+        </view>
+      </view>
+      <view class="sheet-label">队伍名称</view>
+      <input class="input" placeholder="名称" bindinput="onEditName" value="{{editName}}" />
+      <view class="sheet-label">成员上限（1-99）</view>
+      <input class="input" type="number" bindinput="onEditMax" value="{{editMax}}" />
+      <view class="sheet-tip">邀请码与微信分享均直接加入，无需审批</view>
+      <button class="btn btn-primary" bindtap="saveSettings" loading="{{savingSettings}}">保存</button>
+      <view class="dissolve-zone" wx:if="{{myRole === 'OWNER'}}">
+        <view class="dissolve-btn" hover-class="cd-entry-press" bindtap="onDissolve">解散队伍</view>
+        <view class="dissolve-tip">解散后成员、心愿单、队伍冰箱将被删除，圈内菜谱转为私密</view>
+      </view>
+  </view>
+  </block>
+</view>

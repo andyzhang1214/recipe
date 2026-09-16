@@ -1,0 +1,29 @@
+<view class="page theme-{{theme}} bg-{{skinBg}}" style="{{bgStyle}}">
+  <nav-bar title="加入队伍" back="{{true}}" theme="{{theme}}" />
+  <view class="page-content">
+    <view class="center-card">
+      <view class="badge {{joined ? 'ok' : ''}}">
+        <view class="badge-inner">{{joined ? '✓' : '家'}}</view>
+      </view>
+      <view class="big">{{joined ? (already ? '已在队伍中' : '已加入队伍') : '邀请你加入队伍'}}</view>
+      <view class="sub" wx:if="{{joined}}">{{message}}</view>
+      <view class="sub" wx:elif="{{!wx_token}}">需要先登录微信账号</view>
+      <view class="sub" wx:elif="{{loading}}">{{message}}</view>
+      <view class="sub" wx:else>{{message}}</view>
+
+      <!-- 未登录：先登录，登录后自动加入 -->
+      <button class="btn btn-primary" wx:if="{{!wx_token}}" bindtap="onLoginTap">微信一键登录并加入</button>
+
+      <!-- 加入失败（队伍已满/邀请过期等）：可重试 -->
+      <block wx:if="{{wx_token && failed}}">
+        <button class="btn btn-primary" bindtap="tryJoin">重试</button>
+        <button class="btn btn-plain" bindtap="backHome">去逛逛菜谱</button>
+      </block>
+
+      <!-- 加入成功：进入队伍 -->
+      <button class="btn btn-primary" wx:if="{{joined}}" bindtap="enterCircle">进入队伍</button>
+      <button class="btn btn-plain" wx:if="{{joined}}" bindtap="backHome">去逛逛菜谱</button>
+    </view>
+  </view>
+  <login-popup id="login-popup" bindlogined="onLogined" />
+</view>

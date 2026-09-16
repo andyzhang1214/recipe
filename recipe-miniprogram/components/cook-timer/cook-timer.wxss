@@ -1,0 +1,117 @@
+/* 步骤内联计时组件 · 拾味星球风格（单一连续布局：数字常驻原地跳动，无区块切换） */
+.cook-timer {
+  margin-top: 28rpx;
+  border-radius: var(--radius-card);
+  background: var(--accent-grad-soft, rgba(232, 100, 62, 0.10));
+  border: 2rpx solid var(--accent-weak, rgba(232, 100, 62, 0.18));
+  padding: 24rpx 28rpx;
+}
+
+/* ---- 常驻一行：时间 + 状态 + 主按钮 ---- */
+.ct-row {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  min-height: 76rpx;
+}
+.ct-time {
+  font-size: 60rpx;
+  font-weight: 700;
+  color: var(--sub, #8B7F73);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 2rpx;
+  line-height: 1;
+  font-family: 'DIN Alternate', -apple-system, 'PingFang SC', monospace;
+  display: flex;
+  align-items: baseline;
+  flex-shrink: 0;
+}
+.cook-timer.on .ct-time {
+  color: var(--accent, #E8643E);
+  text-shadow: 0 6rpx 20rpx var(--glow, rgba(240, 128, 90, 0.35));
+}
+.cook-timer.done .ct-time { color: var(--ok, #4E8A4E); text-shadow: none; }
+.ct-time-hover { opacity: 0.65; }
+.ct-add {
+  margin-left: 10rpx;
+  font-size: 24rpx;
+  font-weight: 600;
+  color: var(--accent, #E8643E);
+  background: var(--card, #fff);
+  border: 2rpx solid var(--accent-weak, rgba(232, 100, 62, 0.30));
+  border-radius: 50%;
+  width: 32rpx;
+  height: 32rpx;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  align-self: center;
+}
+
+.ct-state {
+  flex: 1;
+  min-width: 0;
+  font-size: 23rpx;
+  color: var(--sub, #8B7F73);
+  background: var(--card, #fff);
+  border-radius: var(--radius-tag);
+  padding: 8rpx 20rpx;
+  letter-spacing: 1rpx;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  box-sizing: border-box;
+}
+.cook-timer.on .ct-state { color: var(--accent, #E8643E); font-weight: 600; }
+.cook-timer.done .ct-state { color: var(--ok, #4E8A4E); background: var(--ok-weak, rgba(78, 138, 78, 0.12)); font-weight: 600; }
+
+/* ---- 主按钮：常驻右侧，开始/暂停/继续/重置同一位置 ---- */
+.t-btn {
+  margin: 0;
+  padding: 0;
+  height: 68rpx;
+  line-height: 68rpx;
+  border-radius: var(--radius-btn);
+  font-size: 26rpx;
+  font-weight: 600;
+  letter-spacing: 1rpx;
+  border: none;
+  box-sizing: border-box;
+  flex-shrink: 0;
+}
+.t-btn::after { border: none; }
+.t-btn.main {
+  width: 152rpx;
+  background: var(--accent-grad, linear-gradient(135deg, #F0805A, #E25A3C));
+  color: var(--btn-text, #fff);
+  box-shadow: 0 8rpx 20rpx var(--glow, rgba(240, 128, 90, 0.35));
+  /* 原生 button 文字基线不齐，flex 强制双向居中 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+.cook-timer.done .t-btn.main {
+  background: var(--fill, rgba(120, 100, 80, 0.10));
+  color: var(--sub, #8B7F73);
+  box-shadow: none;
+}
+.t-hover { opacity: 0.8; }
+
+/* ---- 进度条：常驻空轨，开始后填充 ---- */
+.progress-track {
+  margin-top: 18rpx;
+  height: 10rpx;
+  border-radius: 999rpx;
+  background: var(--fill, rgba(120, 100, 80, 0.12));
+  overflow: hidden;
+}
+.progress-bar {
+  height: 100%;
+  border-radius: 999rpx;
+  background: var(--accent-grad, linear-gradient(90deg, #F0805A, #E25A3C));
+  transition: width 0.9s linear;
+}
+.cook-timer.done .progress-bar { background: var(--ok, #4E8A4E); }

@@ -1,0 +1,41 @@
+<view class="page theme-{{theme}} bg-{{skinBg}}" style="{{bgStyle}}">
+  <nav-bar title="热量查询" back="{{true}}" theme="{{theme}}" />
+  <view class="search-row">
+    <view class="search-wrap">
+      <text class="search-icon"></text>
+      <input class="input search" placeholder="搜索食品/调料，如：鸡蛋" bindinput="onInput" value="{{keyword}}" confirm-type="search" bindconfirm="onSearch" />
+      <view class="go-btn {{keyword ? '' : 'dim'}}" bindtap="onSearch" hover-class="go-press">
+        <text class="go-ic"></text>
+      </view>
+    </view>
+  </view>
+
+  <view class="cats">
+    <view class="cat {{category === '' ? 'active' : ''}}" data-idx="0" bindtap="onCategory">全部</view>
+    <view class="cat {{category === '食品' ? 'active' : ''}}" data-idx="1" bindtap="onCategory">食品</view>
+    <view class="cat {{category === '调料' ? 'active' : ''}}" data-idx="2" bindtap="onCategory">调料</view>
+  </view>
+
+  <view class="food-grid">
+    <view class="food-card" wx:for="{{list}}" wx:key="id">
+      <view class="food-top">
+        <view class="food-name">{{item.name}}</view>
+        <view class="food-tag" wx:if="{{item.category}}">{{item.category}}</view>
+      </view>
+      <view class="food-remark">{{item.unit || ''}}{{item.remark ? ' · ' + item.remark : ''}}</view>
+      <view class="kcal k-{{item.kcalLevel}}">
+        <text class="kcal-num">{{item.caloriesPer100}}</text>
+        <text class="kcal-unit">千卡/100g</text>
+      </view>
+    </view>
+  </view>
+  <view class="legend" wx:if="{{list.length > 0}}">
+    <text class="lg lg-high">≥400 高热量</text>
+    <text class="lg lg-mid">200-399 适中</text>
+    <text class="lg lg-low">&lt;200 低热量</text>
+  </view>
+  <view class="empty" wx:if="{{!loading && list.length === 0}}">
+    <text class="empty-icon">🔍</text>
+    没有找到，换个关键词试试
+  </view>
+</view>

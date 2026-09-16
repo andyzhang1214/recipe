@@ -1,0 +1,80 @@
+<view class="page theme-{{theme}} bg-{{skinBg}}" style="{{bgStyle}}">
+  <!-- 自定义导航栏「拾味星球」：滚动吸顶固定，内容从下方穿过 -->
+  <view class="cnav" style="padding-top: {{statusBarHeight}}px;">
+    <view class="cnav-row" style="height: {{navBarHeight}}px;">
+      <view class="brand-name">广场</view>
+    </view>
+  </view>
+
+  <!-- 搜索框：随内容滚动（不吸顶） -->
+  <view class="search-bar" bindtap="onSearchTap">
+    <view class="search-ph">
+      <text class="search-icon"></text>
+      <text class="search-txt">搜索菜名 / 食材，看看今天做什么</text>
+    </view>
+  </view>
+
+  <view class="page-content">
+    <!-- 隐藏 Banner：后台推送内容才展示 -->
+    <swiper wx:if="{{banners.length > 0}}" class="banner" indicator-dots autoplay circular interval="4000"
+            indicator-color="rgba(255,255,255,0.4)" indicator-active-color="#ffffff">
+      <swiper-item wx:for="{{banners}}" wx:key="id">
+        <image class="banner-img" src="{{item.imageUrl}}" mode="aspectFill" lazy-load
+               data-banner="{{item}}" bindtap="onBannerTap" />
+      </swiper-item>
+    </swiper>
+
+    <!-- 菜谱瀑布流：上图片·下滑动 + 收藏·关注·星级 -->
+    <view class="recipe-grid">
+      <view class="recipe-card" wx:for="{{recipes}}" wx:key="id" data-id="{{item.id}}" bindtap="onRecipeTap" hover-class="pressed">
+        <view class="cover-wrap">
+          <!-- 多图可滑动 -->
+          <swiper wx:if="{{item.covers && item.covers.length > 1}}" class="cover-swiper"
+                  indicator-dots circular="{{true}}"
+                  indicator-color="rgba(255,255,255,0.5)" indicator-active-color="#ffffff">
+            <swiper-item wx:for="{{item.covers}}" wx:for-item="cv" wx:key="*this">
+              <image class="cover" src="{{cv}}" mode="aspectFill" lazy-load data-img="{{cv}}" catchtap="onPreviewCover" />
+            </swiper-item>
+          </swiper>
+          <image wx:else class="cover" src="{{item.cover || (item.covers && item.covers[0]) || '/assets/placeholder.png'}}"
+                 mode="aspectFill" lazy-load />
+
+          <!-- 右上角收藏：纯 emoji ♡/♥，无圆按钮外壳 -->
+          <view class="cover-fav {{item.favorited ? 'on' : ''}}"
+                catchtap="onToggleFavorite" data-id="{{item.id}}" data-idx="{{index}}">
+            <text class="fav-icon">{{item.favorited ? '♥' : '♡'}}</text>
+          </view>
+        </view>
+
+        <view class="info">
+          <view class="title">{{item.title}}</view>
+          <view class="rating-row">
+            <text class="rating-star">★</text>
+            <text class="rating-num">{{item.avgStars || 0}}</text>
+            <text class="meta-dot">·</text>
+            <text>{{item.ratingCount || 0}} 评</text>
+            <text wx:if="{{item.servings}}" class="meta-dot">·</text>
+            <text wx:if="{{item.servings}}">{{item.servings}} 人份</text>
+          </view>
+          <view class="meta-row" data-uid="{{item.authorId}}" bindtap="onAuthorTap" hover-class="meta-press">
+            <image class="user-avatar" src="{{item.authorAvatar || '/assets/placeholder.png'}}" lazy-load />
+            <text class="user-name">{{item.authorNickname || '匿名厨友'}}</text>
+            <view class="meta-spacer"></view>
+            <view wx:if="{{myId !== item.authorId}}" class="follow-btn {{followedMap[item.authorId] ? 'on' : ''}}"
+                  catchtap="onToggleFollow" data-uid="{{item.authorId}}">
+              {{followedMap[item.authorId] ? '已关注' : '关注'}}
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view class="empty" wx:if="{{!loading && recipes.length === 0}}">
+      <text class="empty-icon">🍲</text>
+      广场空空如也，快去发布第一道菜谱
+    </view>
+    <view class="empty small" wx:if="{{finished && recipes.length > 0}}">— 没有更多了 —</view>
+  </view>
+
+  <login-popup id="login-popup" bindlogined="onLogined" />
+</view>

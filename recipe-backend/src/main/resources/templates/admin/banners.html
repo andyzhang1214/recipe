@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{admin/layout :: base('banners', ~{::main})}">
+<body>
+<main>
+  <div class="page-title">首页 Banner（小程序广场轮播）</div>
+  <div class="toolbar">
+    <span class="muted">仅「ON 且 在投放时间窗内」的 Banner 会在小程序广场展示，无推送不占位</span>
+    <div class="spacer"></div>
+    <button class="btn primary" onclick="openModal()">＋ 新建 Banner</button>
+  </div>
+  <div class="card">
+    <div class="banner-item" th:each="b : ${banners}">
+      <img th:src="${b.imageUrl}">
+      <div class="info">
+        <div>
+          <strong th:text="${b.title ?: '(无标题)'}">秋季新品</strong>
+          <span class="tag" th:classappend="${b.status == 'ON'} ? 'tag-green' : 'tag-gray'"
+                th:text="${b.status == 'ON'} ? '展示中' : '已下线'">展示中</span>
+        </div>
+        <div class="muted" style="margin-top:6px;font-size:13px">
+          跳转：<span th:text="${b.linkType == 'RECIPE'} ? '菜谱 #' + ${b.linkValue} : '无'">无</span>
+          · 排序 <span th:text="${b.sort}">0</span>
+          <span th:if="${b.startAt != null || b.endAt != null}">· 时间窗
+            <span th:text="${b.startAt != null} ? ${#temporals.format(b.startAt, 'MM-dd HH:mm')} : '不限'">-</span>
+            ~ <span th:text="${b.endAt != null} ? ${#temporals.format(b.endAt, 'MM-dd HH:mm')} : '不限'">-</span>
+          </span>
+        </div>
+      </div>
+      <div class="ops">
+        <button class="btn ok sm" th:if="${b.status == 'OFF'}" th:attr="data-id=${b.id}" onclick="setStatus(this, 'ON')">上架</button>
+        <button class="btn warn sm" th:if="${b.status == 'ON'}" th:attr="data-id=${b.id}" onclick="setStatus(this, 'OFF')">下架</button>
+        <button class="btn plain sm" th:attr="data-id=${b.id}" onclick="edit(this)">编辑</button>
+        <button class="btn danger sm" th:attr="data-id=${b.id}" onclick="del(this)">删除</button>
+      </div>
+    </div>
+    <div class="empty-tip" th:if="${#lists.isEmpty(banners)}">暂无 Banner，点击右上角新建</div>
+  </div>
+
+  <!-- 新建/编辑弹层 -->
+  <div class="modal-mask" id="modal">
+    <div class="modal">
+      <div class="m-head" id="mTitle">新建 Banner</div>
+      <div class="form-grid">
+        <div><label>标题</label><input id="f_title" placeholder="如：秋季新品推荐"></div>
+        <div><label>图片 URL *</label><input id="f_image" placeholder="https://…（COS 或任意 https 图）"></div>
+        <div><label>跳转类型</label>
+          <select id="f_linkType">
+            <option value="NONE">无跳转</option>
+            <option value="RECIPE">跳转菜谱</option>
+          </select>
+        </div>
+        <div><label>菜谱 ID（跳转菜谱时填）</label><input id="f_linkValue" type="number" placeholder="菜谱 id"></div>
+        <div><label>排序（小在前）</label><input id="f_sort" type="number" value="0"></div>
+        <div><label>状态</label>
+          <select id="f_status">
+            <option value="OFF">下线</option>
+            <option value="ON">上线展示</option>
+          </select>
+        </div>
+        <div><label>开始时间（可空）</label><input id="f_start" type="datetime-local"></div>
+        <div><label>结束时间（可空）</label><input id="f_end" type="datetime-local"></div>
+      </div>
+      <div class="m-foot">
+        <button class="btn plain" onclick="closeModal()">取消</button>
+        <button class="btn primary" onclick="save()">保存</button>
+      </div>
+    </div>
+  </div>
+</main>
+<script>
+  let editingId = null;
+  function openModal() {
+    editingId = null;
+    ['f_title', 'f_image', 'f_linkValue', 'f_start', 'f_end'].forEach(id => document.getElementById(id).value = '');
+    document.getElementById('f_linkType').value = 'NONE';
+    document.getElementById('f_status').value = 'OFF';
+    document.getElementById('f_sort').value = '0';
+    document.getElementById('mTitle').textContent = '新建 Banner';
+    document.getElementById('modal').classList.add('show');
+  }
+  function edit(btn) {
+    const item = btn.closest('.banner-item');
+    const info = item.querySelector('.info');
+    editingId = btn.dataset.id;
+    document.getElementById('mTitle').textContent = '编辑 Banner #' + editingId;
+    document.getElementById('f_image').value = item.querySelector('img').src;
+    document.getElementById('f_title').value = info.querySelector('strong').textContent === '(无标题)' ? '' : info.querySelector('strong').textContent;
+    // 解析跳转/排序/时间窗
+    const muted = info.querySelector('.muted').textContent;
+    const linkType = muted.includes('跳转：菜谱') ? 'RECIPE' : 'NONE';
+    document.getElementById('f_linkType').value = linkType;
+    const m = muted.match(/菜谱 #(\d+)/);
+    document.getElementById('f_linkValue').value = m ? m[1] : '';
+    const sortM = muted.match(/排序 (\d+)/);
+    document.getElementById('f_sort').value = sortM ? sortM[1] : '0';
+    const status = item.querySelector('.tag').textContent === '展示中' ? 'ON' : 'OFF';
+    document.getElementById('f_status').value = status;
+    document.getElementById('f_start').value = '';
+    document.getElementById('f_end').value = '';
+    document.getElementById('modal').classList.add('show');
+  }
+  function closeModal() { document.getElementById('modal').classList.remove('show'); }
+  function save() {
+    const imageUrl = document.getElementById('f_image').value.trim();
+    if (!imageUrl) return alert('图片 URL 必填');
+    const linkValue = document.getElementById('f_linkValue').value;
+    const data = {
+      title: document.getElementById('f_title').value.trim() || null,
+      imageUrl,
+      linkType: document.getElementById('f_linkType').value,
+      linkValue: linkValue ? Number(linkValue) : null,
+      sort: Number(document.getElementById('f_sort').value || 0),
+      status: document.getElementById('f_status').value,
+      startAt: document.getElementById('f_start').value || null,
+      endAt: document.getElementById('f_end').value || null
+    };
+    const url = editingId ? '/admin/api/banners/' + editingId : '/admin/api/banners';
+    fetch(url, {
+      method: editingId ? 'PUT' : 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    }).then(r => r.json()).then(res => {
+      if (res.code === 0) location.reload();
+      else alert(res.message || '保存失败');
+    });
+  }
+  function setStatus(btn, status) {
+    fetch('/admin/api/banners/' + btn.dataset.id + '/status', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ status })
+    }).then(r => r.json()).then(res => {
+      if (res.code === 0) location.reload();
+      else alert(res.message || '操作失败');
+    });
+  }
+  function del(btn) {
+    if (!confirm('确认删除该 Banner？')) return;
+    fetch('/admin/api/banners/' + btn.dataset.id, { method: 'DELETE' })
+      .then(r => r.json()).then(res => {
+        if (res.code === 0) location.reload();
+        else alert(res.message || '操作失败');
+      });
+  }
+</script>
+</body>
+</html>

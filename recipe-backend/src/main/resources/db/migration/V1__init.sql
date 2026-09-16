@@ -1,0 +1,189 @@
+-- 菜谱共享小程序：核心表结构（V1）
+-- 引擎统一 InnoDB，utf8mb4
+
+-- 用户
+CREATE TABLE `user` (
+  `id` BIGINT NOT NULL AUTO_INCREMENT,
+  `openid` VARCHAR(64) NOT NULL,
+  `unionid` VARCHAR(64) DEFAULT NULL,
+  `nickname` VARCHAR(64) DEFAULT NULL,
+  `avatar` VARCHAR(512) DEFAULT NULL,
+  `phone` VARCHAR(20) DEFAULT NULL,
+  `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_openid` (`openid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='用户';
+
+-- 圈层（家庭/团队）
+CREATE TABLE `family` (
+  `id` BIGINT NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(64) NOT NULL,
+  `type` VARCHAR(16) NOT NULL COMMENT 'FAMILY/TEAM',
+  `owner_id` BIGINT NOT NULL,
+  `join_code` VARCHAR(32) NOT NULL,
+  `max_members` INT NOT NULL DEFAULT 99 COMMENT '成员上限，1-99，默认99',
+  `member_count` INT NOT NULL DEFAULT 0,
+  `approval_required` TINYINT(1) NOT NULL DEFAULT 1 COMMENT '审批开关：1=需群主审批，0=凭ID直接加入',
+  `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_join_code` (`join_code`),
+  KEY `idx_owner` (`owner_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='圈层（家庭/团队）';
+
+-- 圈层成员
+CREATE TABLE `family_member` (
+  `id` BIGINT NOT NULL AUTO_INCREMENT,
+  `family_id` BIGINT NOT NULL,
+  `user_id` BIGINT NOT NULL,
+  `role` VARCHAR(16) NOT NULL DEFAULT 'MEMBER' COMMENT 'OWNER/ADMIN/MEMBER',
+  `status` VARCHAR(16) NOT NULL DEFAULT 'PENDING' COMMENT 'PENDING/APPROVED/REJECTED',
+  `joined_at` DATETIME DEFAULT NULL,
+  `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_family_user` (`family_id`, `user_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='圈层成员';
+
+-- 圈层邀请（分享卡片/二维码，带有效期）
+CREATE TABLE `family_invite` (
+  `id` BIGINT NOT NULL AUTO_INCREMENT,
+  `family_id` BIGINT NOT NULL,
+  `type` VARCHAR(16) NOT NULL COMMENT 'SHARE_CARD/QR_CODE',
+  `token` VARCHAR(32) NOT NULL,
+  `valid_days` INT NOT NULL DEFAULT 7,
+  `expires_at` DATETIME NOT NULL,
+  `status` VARCHAR(16) NOT NULL DEFAULT 'ACTIVE' COMMENT 'ACTIVE/REVOKED',
+  `created_by` BIGINT NOT NULL,
+  `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_token` (`token`),
+  KEY `idx_family` (`family_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='圈层邀请';
+
+-- 菜谱
+CREATE TABLE `recipe` (
+  `id` BIGINT NOT NULL AUTO_INCREMENT,
+  `author_id` BIGINT NOT NULL,
+  `family_id` BIGINT DEFAULT NULL COMMENT 'visibility=FAMILY/TEAM 时指向圈层',
+  `title` VARCHAR(128) NOT NULL,
+  `cover` VARCHAR(512) DEFAULT NULL,
+  `visibility` VARCHAR(16) NOT NULL DEFAULT 'PRIVATE' COMMENT 'PRIVATE/FAMILY/TEAM/PUBLIC',
+  `difficulty` VARCHAR(16) DEFAULT NULL COMMENT '简单/中等/困难',
+  `servings` INT DEFAULT NULL COMMENT '几人份',
+  `status` VARCHAR(16) NOT NULL DEFAULT 'PUBLISHED' COMMENT 'DRAFT/PUBLISHED',
+  `avg_stars` DECIMAL(3,2) NOT NULL DEFAULT 0.00,
+  `rating_count` INT NOT NULL DEFAULT 0,
+  `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `idx_author` (`author_id`),
+  KEY `idx_visibility` (`visibility`, `status`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='菜谱';
+
+-- 食材/调料清单
+CREATE TABLE `ingredient` (
+  `id` BIGINT NOT NULL AUTO_INCREMENT,
+  `recipe_id` BIGINT NOT NULL,
+  `name` VARCHAR(64) NOT NULL,
+  `amount` VARCHAR(64) DEFAULT NULL,
+  `unit` VARCHAR(32) DEFAULT NULL,
+  `sort` INT NOT NULL DEFAULT 0,
+  PRIMARY KEY (`id`),
+  KEY `idx_recipe` (`recipe_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='菜谱食材';
+
+-- 步骤
+CREATE TABLE `step` (
+  `id` BIGINT NOT NULL AUTO_INCREMENT,
+  `recipe_id` BIGINT NOT NULL,
+  `ord` INT NOT NULL DEFAULT 0,
+  `text` VARCHAR(1024) NOT NULL,
+  `image` VARCHAR(512) DEFAULT NULL,
+  `duration_sec` INT DEFAULT NULL COMMENT '建议时长(秒)，可带入倒计时',
+  PRIMARY KEY (`id`),
+  KEY `idx_recipe` (`recipe_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='菜谱步骤';
+
+-- 评分（1-5星）
+CREATE TABLE `rating` (
+  `id` BIGINT NOT NULL AUTO_INCREMENT,
+  `recipe_id` BIGINT NOT NULL,
+  `user_id` BIGINT NOT NULL,
+  `stars` INT NOT NULL COMMENT '1-5',
+  `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_recipe_user` (`recipe_id`, `user_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='评分';
+
+-- 评论
+CREATE TABLE `comment` (
+  `id` BIGINT NOT NULL AUTO_INCREMENT,
+  `recipe_id` BIGINT NOT NULL,
+  `user_id` BIGINT NOT NULL,
+  `content` VARCHAR(512) NOT NULL,
+  `parent_id` BIGINT DEFAULT NULL COMMENT '楼中楼回复',
+  `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `idx_recipe` (`recipe_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='评论';
+
+-- 收藏
+CREATE TABLE `favorite` (
+  `id` BIGINT NOT NULL AUTO_INCREMENT,
+  `user_id` BIGINT NOT NULL,
+  `recipe_id` BIGINT NOT NULL,
+  `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_user_recipe` (`user_id`, `recipe_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='收藏';
+
+-- 热量对照表（单表）
+CREATE TABLE `food_calorie` (
+  `id` BIGINT NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(64) NOT NULL,
+  `category` VARCHAR(16) NOT NULL COMMENT '食品/调料',
+  `calories_per_100` INT NOT NULL COMMENT '每100g/ml千卡',
+  `unit` VARCHAR(32) DEFAULT NULL,
+  `remark` VARCHAR(128) DEFAULT NULL,
+  `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `idx_name` (`name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='食品热量对照';
+
+-- 冰箱物品
+CREATE TABLE `fridge_item` (
+  `id` BIGINT NOT NULL AUTO_INCREMENT,
+  `user_id` BIGINT NOT NULL,
+  `name` VARCHAR(64) NOT NULL,
+  `category` VARCHAR(16) DEFAULT NULL COMMENT '蔬菜/肉类/乳品/调料/饮品/其他',
+  `quantity` DECIMAL(10,2) DEFAULT NULL,
+  `unit` VARCHAR(32) DEFAULT NULL,
+  `added_at` DATE NOT NULL COMMENT '放入日期',
+  `expiry_date` DATE DEFAULT NULL COMMENT '保质期到期日',
+  `reminder_days` INT NOT NULL DEFAULT 3,
+  `family_id` BIGINT DEFAULT NULL COMMENT '家庭共享冰箱预留',
+  `note` VARCHAR(255) DEFAULT NULL,
+  `photo_url` VARCHAR(512) DEFAULT NULL COMMENT '拍照备注图片',
+  `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `idx_user` (`user_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='冰箱物品';
+
+-- 首页隐藏 Banner（后台推送才展示）
+CREATE TABLE `banner` (
+  `id` BIGINT NOT NULL AUTO_INCREMENT,
+  `title` VARCHAR(128) DEFAULT NULL,
+  `image_url` VARCHAR(512) NOT NULL,
+  `link_type` VARCHAR(16) NOT NULL DEFAULT 'NONE' COMMENT 'RECIPE/NONE',
+  `link_value` BIGINT DEFAULT NULL COMMENT 'RECIPE 时为目标菜谱 id',
+  `status` VARCHAR(16) NOT NULL DEFAULT 'OFF' COMMENT 'ON/OFF',
+  `sort` INT NOT NULL DEFAULT 0,
+  `start_at` DATETIME DEFAULT NULL,
+  `end_at` DATETIME DEFAULT NULL,
+  `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='首页Banner';

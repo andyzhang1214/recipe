@@ -1,0 +1,202 @@
+/* ===== 主页头部：居中大头像 → 昵称 → UID → 数据栏 → 操作（小红书式） ===== */
+.profile-head {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 56rpx 40rpx 40rpx;
+}
+.avatar-ring {
+  width: 176rpx;
+  height: 176rpx;
+  border-radius: 50%;
+  padding: 6rpx;
+  background: linear-gradient(135deg, rgba(240, 128, 90, 0.55), rgba(232, 100, 62, 0.25));
+}
+.big-avatar {
+  width: 164rpx;
+  height: 164rpx;
+  border-radius: 50%;
+  border: 6rpx solid var(--card);
+  background: var(--fill);
+  display: block;
+}
+.nickname {
+  margin-top: 24rpx;
+  font-size: 40rpx;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: 1rpx;
+  max-width: 600rpx;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.uid-row {
+  margin-top: 12rpx;
+  font-size: 24rpx;
+  color: var(--sub);
+  display: flex;
+  align-items: center;
+  gap: 10rpx;
+}
+.uid-row .dot { color: var(--border); }
+.vis { color: var(--info); }
+.vis-private { color: var(--sub); }
+
+/* 数据栏 */
+.stats {
+  margin-top: 40rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 56rpx;
+}
+.stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 120rpx;
+  padding: 8rpx 12rpx;
+  border-radius: var(--radius-md);
+  transition: background 0.15s ease;
+}
+.stat-press { background: var(--fill); }
+.stat-num {
+  font-size: 40rpx;
+  font-weight: 700;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+  line-height: 1.2;
+}
+.stat-label {
+  margin-top: 6rpx;
+  font-size: 24rpx;
+  color: var(--sub);
+  letter-spacing: 1rpx;
+}
+.stat-divider {
+  width: 1rpx;
+  height: 48rpx;
+  background: var(--border);
+}
+
+/* 操作按钮 */
+.ops { margin-top: 36rpx; }
+.op-btn {
+  min-width: 280rpx;
+  height: 76rpx;
+  line-height: 72rpx;
+  font-size: 28rpx;
+  border-radius: var(--radius-btn);
+}
+
+/* ===== 锁定态卡片 ===== */
+.locked-card {
+  margin: 24rpx 32rpx;
+  padding: 72rpx 40rpx;
+  text-align: center;
+}
+.lock-icon { font-size: 88rpx; line-height: 1; }
+.lock-title {
+  margin-top: 28rpx;
+  font-size: 32rpx;
+  font-weight: 700;
+  color: var(--text);
+}
+.lock-sub {
+  margin-top: 14rpx;
+  font-size: 25rpx;
+  color: var(--sub);
+  line-height: 1.7;
+}
+
+/* ===== 菜谱瀑布流（沿用广场卡片语言） ===== */
+.page-content { padding-top: 8rpx; }
+.grid-head {
+  display: flex;
+  align-items: baseline;
+  gap: 14rpx;
+  padding: 8rpx 40rpx 4rpx;
+}
+.grid-title {
+  font-size: 32rpx;
+  font-weight: 700;
+  color: var(--text);
+}
+.grid-count { font-size: 24rpx; color: var(--sub); }
+
+.recipe-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  padding-top: 16rpx;
+  margin: 0 -8rpx;
+}
+.recipe-card {
+  width: 340rpx;
+  margin: 0 8rpx 24rpx;
+  border-radius: var(--radius-card);
+  overflow: hidden;
+  transition: transform 0.18s ease;
+  /* 皮肤 padding/描边计入 340rpx，保证两列瀑布流不被撑成单列（与广场一致） */
+  box-sizing: border-box;
+}
+.recipe-card.pressed { transform: scale(0.96); }
+.cover-wrap {
+  width: 340rpx;
+  height: 420rpx;
+  border-radius: var(--radius-card);
+  overflow: hidden;
+  background: var(--fill);
+  box-shadow: var(--shadow);
+}
+.cover {
+  width: 340rpx;
+  height: 420rpx;
+  background: var(--fill);
+  display: block;
+}
+.info { padding: 18rpx 6rpx 4rpx; }
+.title {
+  font-size: 31rpx;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.4;
+  text-align: center;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  letter-spacing: 0.5rpx;
+  margin-bottom: 14rpx;
+}
+.rating-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8rpx;
+  font-size: 24rpx;
+  color: var(--sub);
+  font-variant-numeric: tabular-nums;
+}
+.rating-star { color: var(--warn); }
+.rating-num { color: var(--text); font-weight: 700; font-size: 26rpx; }
+.meta-dot { color: var(--border); margin: 0 4rpx; }
+
+/* ===== 可爱风：瀑布流卡片贴纸化（与广场瀑布流一致） ===== */
+.page.theme-cute .recipe-card {
+  background: #FFFFFF;
+  border: 3rpx solid #4E2B36;
+  border-radius: 36rpx;
+  box-shadow: 6rpx 6rpx 0 rgba(78, 43, 54, 0.10);
+  padding: 14rpx 14rpx 16rpx;
+}
+.page.theme-cute .cover-wrap {
+  width: 100%;
+  height: 380rpx;
+  border-radius: 26rpx;
+  box-shadow: none;
+  border: 1.5rpx solid #EAD2D8;
+}
+.page.theme-cute .cover { width: 100%; height: 380rpx; }
+.page.theme-cute .info { padding: 16rpx 8rpx 2rpx; }

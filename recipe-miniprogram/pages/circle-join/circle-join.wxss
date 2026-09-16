@@ -1,0 +1,40 @@
+/* 加入队伍 */
+.page-content { display: flex; justify-content: center; padding-top: 100rpx; }
+.center-card {
+  background: var(--card);
+  border-radius: var(--radius-card);
+  padding: 72rpx 60rpx 80rpx;
+  text-align: center;
+  box-shadow: var(--shadow-lg);
+  width: 100%;
+  border: var(--card-outline);
+}
+.badge {
+  width: 128rpx;
+  height: 128rpx;
+  border-radius: 50%;
+  background: var(--accent-grad);
+  margin: 0 auto 36rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 16rpx 40rpx var(--glow);
+}
+.badge.ok { background: linear-gradient(135deg, #7CC98A, #3E9E54); box-shadow: 0 16rpx 40rpx rgba(62, 158, 84, 0.35); }
+.badge-inner {
+  width: 96rpx;
+  height: 96rpx;
+  border-radius: 50%;
+  border: 2rpx dashed rgba(255, 255, 255, 0.7);
+  color: #fff;
+  font-size: 44rpx;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.big { font-size: 44rpx; font-weight: 700; color: var(--text); letter-spacing: 2rpx; }
+.sub { font-size: 26rpx; color: var(--sub); margin: 24rpx 0 48rpx; line-height: 1.7; }
+.center-card .btn { width: 82%; margin: 0 auto; }
+.center-card .btn + .btn { margin-top: 24rpx; }
+.sub + .btn, .sub + button { margin-top: 8rpx; }

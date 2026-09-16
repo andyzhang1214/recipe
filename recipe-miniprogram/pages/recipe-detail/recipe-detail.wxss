@@ -1,0 +1,261 @@
+/* 菜谱详情 */
+/* 沉浸式封面：留白悬浮大圆角 */
+.hero {
+  margin: 24rpx 28rpx 0;
+  border-radius: var(--radius-card);
+  overflow: hidden;
+  box-shadow: var(--shadow-lg);
+  position: relative;
+}
+.hero-swiper, .hero-img { width: 100%; height: 420rpx; display: block; }
+
+.detail-body { padding-top: 4rpx; }
+.title-card { margin-top: 28rpx; }
+
+.head-row { display: flex; align-items: flex-start; gap: 20rpx; }
+.title-wrap { flex: 1; min-width: 0; }
+.title { font-size: 42rpx; font-weight: 700; color: var(--text); line-height: 1.35; letter-spacing: 1rpx; }
+/* 作者行：头像 + 昵称，点击进用户主页 */
+.author-row {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  margin-top: 14rpx;
+}
+.author-row.author-press { opacity: 0.65; }
+.author-avatar {
+  width: 52rpx;
+  height: 52rpx;
+  border-radius: 50%;
+  background: var(--fill);
+  box-shadow: var(--shadow-sm);
+}
+.author-name { font-size: 25rpx; color: var(--text); font-weight: 600; }
+.author-sub { font-size: 23rpx; color: var(--sub); }
+.meta { margin-top: 20rpx; display: flex; align-items: center; flex-wrap: wrap; gap: 8rpx; }
+.avg { font-size: 24rpx; color: var(--sub); font-weight: 500; }
+.avg-star { color: var(--star); font-size: 26rpx; }
+
+/* 收藏心形 */
+.fav-btn {
+  width: 108rpx;
+  height: 108rpx;
+  border-radius: var(--radius-card);
+  background: var(--fill);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2rpx;
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+}
+.fav-heart { font-size: 40rpx; color: var(--sub); line-height: 1; transition: all 0.2s ease; }
+.fav-txt { font-size: 20rpx; color: var(--sub); }
+.fav-btn.on { background: var(--accent-grad-soft); }
+.fav-btn.on .fav-heart { color: var(--accent); }
+.fav-btn.on .fav-txt { color: var(--accent); }
+.fav-btn:active { transform: scale(0.92); }
+
+.section-head { margin-top: 4rpx; }
+
+/* 评分 */
+.stars { display: flex; gap: 22rpx; justify-content: center; padding: 14rpx 0 6rpx; }
+.star { font-size: 72rpx; color: var(--fill); transition: transform 0.18s ease, color 0.18s ease; line-height: 1; }
+.star.on { color: var(--star); text-shadow: 0 4rpx 16rpx rgba(245, 166, 35, 0.35); }
+.star:active { transform: scale(1.2); }
+
+/* 食材 */
+.ing { display: flex; justify-content: space-between; align-items: center; padding: 22rpx 0; border-bottom: 1rpx dashed var(--border); }
+.ing:last-child { border-bottom: none; }
+.ing-name { font-size: 29rpx; color: var(--text); font-weight: 500; }
+.ing-name::before {
+  content: '';
+  display: inline-block;
+  width: 8rpx;
+  height: 8rpx;
+  border-radius: 50%;
+  background: var(--accent);
+  margin-right: 16rpx;
+  vertical-align: middle;
+  opacity: 0.65;
+}
+/* 用量胶囊：数字大、单位小（精致层次） */
+.ing-amount {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 4rpx;
+  background: var(--card2);
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  font-size: 28rpx;
+  border-radius: var(--radius-tag);
+  padding: 8rpx 22rpx;
+  letter-spacing: 0.5rpx;
+}
+.ing-amount .unit {
+  font-size: 20rpx;
+  font-weight: 500;
+  color: var(--sub);
+  letter-spacing: 0;
+}
+
+/* 步骤 */
+.step { display: flex; gap: 22rpx; margin-bottom: 34rpx; position: relative; }
+.step:last-child { margin-bottom: 0; }
+/* 步骤时间轴竖线 */
+.step::before {
+  content: '';
+  position: absolute;
+  left: 25rpx;
+  top: 56rpx;
+  bottom: -34rpx;
+  width: 2rpx;
+  background: var(--border);
+}
+.step:last-child::before { display: none; }
+.step-no {
+  width: 52rpx;
+  height: 52rpx;
+  border-radius: 50%;
+  background: var(--accent-grad);
+  color: var(--btn-text);
+  font-size: 26rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-weight: 700;
+  box-shadow: 0 6rpx 16rpx var(--glow);
+}
+.step-text { font-size: 30rpx; line-height: 1.75; color: var(--text); }
+.step-main { flex: 1; min-width: 0; }
+.step-seasoning {
+  margin-top: 12rpx;
+  font-size: 24rpx;
+  color: var(--accent);
+  background: var(--accent-grad-soft);
+  border-radius: var(--radius-tag);
+  padding: 8rpx 22rpx;
+  display: inline-block;
+  font-weight: 500;
+}
+/* 步骤时长小角标 */
+.step-meta {
+  margin-top: 12rpx;
+  display: inline-flex;
+  align-items: center;
+  gap: 8rpx;
+  font-size: 24rpx;
+  color: var(--sub);
+  background: var(--card2);
+  border-radius: var(--radius-tag);
+  padding: 6rpx 18rpx;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+.step-meta .meta-icon { font-size: 22rpx; }
+.step-image { width: 100%; height: 340rpx; border-radius: var(--radius-md); margin-top: 18rpx; background: var(--fill); }
+
+/* 评论 */
+.comment { display: flex; gap: 20rpx; padding: 24rpx 0; border-bottom: 1rpx solid var(--border); }
+.comment:last-of-type { border-bottom: none; }
+.c-avatar {
+  width: 72rpx;
+  height: 72rpx;
+  border-radius: 50%;
+  background: var(--accent-grad-soft);
+  color: var(--accent);
+  font-size: 28rpx;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.c-main { flex: 1; min-width: 0; }
+.c-user { font-size: 23rpx; color: var(--sub); font-weight: 500; }
+.c-content { font-size: 28rpx; color: var(--text); margin-top: 8rpx; line-height: 1.65; }
+.comment-empty {
+  text-align: center;
+  color: var(--sub);
+  padding: 56rpx 0 24rpx;
+  font-size: 26rpx;
+}
+.comment-empty .empty-icon { font-size: 80rpx; opacity: 0.45; margin-bottom: 12rpx; line-height: 1; }
+.comment-empty .empty-text { font-size: 28rpx; color: var(--text); font-weight: 600; margin-bottom: 6rpx; }
+.comment-empty .empty-tip-text { font-size: 23rpx; color: var(--sub); }
+
+/* 评论编辑器：大输入框 + 独立发布按钮 */
+.comment-editor {
+  margin-top: 24rpx;
+  padding-top: 16rpx;
+  border-top: 1rpx solid var(--border);
+}
+.editor-input {
+  width: 100%;
+  min-height: 200rpx;
+  box-sizing: border-box;
+  padding: 24rpx 28rpx;
+  font-size: 29rpx;
+  line-height: 1.65;
+  color: var(--text);
+  background: var(--card2);
+  border-radius: var(--radius-md);
+  letter-spacing: 0.5rpx;
+}
+.editor-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 20rpx;
+}
+.char-count {
+  font-size: 23rpx;
+  color: var(--sub);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.5rpx;
+}
+.editor-submit {
+  margin: 0;
+  padding: 0 48rpx;
+  height: 80rpx;
+  line-height: 80rpx;
+  border-radius: var(--radius-btn);
+  font-size: 28rpx;
+  font-weight: 600;
+  letter-spacing: 2rpx;
+  border: none;
+  background: var(--accent-grad);
+  color: var(--btn-text);
+  box-shadow: 0 10rpx 24rpx var(--glow);
+}
+.editor-submit::after { border: none; }
+.editor-submit[disabled] {
+  background: var(--fill);
+  color: var(--sub);
+  box-shadow: none;
+}
+
+/* 底部毛玻璃：z-index 必须高于步骤序号等相对定位元素，否则序号会浮在按钮上 */
+.footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 10;
+  background: var(--nav-blur);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  padding: 22rpx 28rpx calc(22rpx + env(safe-area-inset-bottom));
+  display: flex;
+  gap: 20rpx;
+  border-top: 1rpx solid var(--border);
+}
+.footer .btn { flex: 1; }
+
+/* 共享弹层 */
+.sheet-title { font-size: 34rpx; font-weight: 700; color: var(--text); text-align: center; margin-bottom: 32rpx; }
+.select { margin-top: 16rpx; }
+.popup-btn { width: 100%; margin-top: 36rpx; }

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{admin/layout :: base('comments', ~{::main})}">
+<body>
+<main>
+  <div class="page-title">评论管理</div>
+  <div class="card">
+    <table>
+      <thead>
+      <tr><th>ID</th><th>菜谱</th><th>用户</th><th>内容</th><th>时间</th><th>操作</th></tr>
+      </thead>
+      <tbody>
+      <tr th:each="row : ${rows}">
+        <td th:text="${row.comment.id}">1</td>
+        <td th:text="${row.recipe}">红烧排骨</td>
+        <td th:text="${row.user}">Andy</td>
+        <td th:text="${row.comment.content}">好吃</td>
+        <td class="muted" th:text="${row.comment.createdAt != null} ? ${#temporals.format(row.comment.createdAt, 'MM-dd HH:mm')} : '—'">08-18 10:00</td>
+        <td><button class="btn danger sm" th:attr="data-id=${row.comment.id}" onclick="del(this)">删除</button></td>
+      </tr>
+      </tbody>
+    </table>
+    <div class="empty-tip" th:if="${#lists.isEmpty(rows)}">暂无评论</div>
+    <div class="pager">
+      <a th:if="${page.current > 1}" th:href="@{/admin/comments(page=${page.current - 1})}">上一页</a>
+      <span class="cur" th:text="${page.current}">1</span>
+      <a th:if="${page.current < page.pages}" th:href="@{/admin/comments(page=${page.current + 1})}">下一页</a>
+      <span th:text="'共 ' + ${page.total} + ' 条'">共 0 条</span>
+    </div>
+  </div>
+</main>
+<script>
+  function del(btn) {
+    if (!confirm('确认删除该评论？')) return;
+    fetch('/admin/api/comments/' + btn.dataset.id, { method: 'DELETE' })
+      .then(r => r.json()).then(res => {
+        if (res.code === 0) location.reload();
+        else alert(res.message || '操作失败');
+      });
+  }
+</script>
+</body>
+</html>

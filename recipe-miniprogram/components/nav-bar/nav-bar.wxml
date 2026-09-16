@@ -1,0 +1,9 @@
+<view class="nav {{theme ? 'theme-' + theme : ''}}">
+  <view style="height: {{statusBarHeight}}px;"></view>
+  <view class="nav-row" style="height: {{navBarHeight}}px;">
+    <view class="nav-back" wx:if="{{back}}" hover-class="nav-back-press" bindtap="onBack">
+      <text class="nav-back-ico">‹</text>
+    </view>
+    <view class="nav-title">{{title}}</view>
+  </view>
+</view>

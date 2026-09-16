@@ -1,0 +1,40 @@
+<view class="page theme-{{theme}} bg-{{skinBg}}" style="{{bgStyle}}">
+  <nav-bar title="{{navTitle}}" back="{{true}}" theme="{{theme}}" />
+  <view class="page-content">
+
+    <!-- 切换：关注 / 粉丝 -->
+    <view class="seg-wrap">
+      <view class="seg">
+        <view class="seg-item {{type === 'following' ? 'active' : ''}}" data-type="following" bindtap="onTypeTap">关注 {{type === 'following' ? list.length : ''}}</view>
+        <view class="seg-item {{type === 'fans' ? 'active' : ''}}" data-type="fans" bindtap="onTypeTap">粉丝 {{type === 'fans' ? list.length : ''}}</view>
+      </view>
+    </view>
+
+    <!-- 用户列表 -->
+    <view class="card grouped">
+      <view class="u-cell" wx:for="{{list}}" wx:key="userId" data-id="{{item.userId}}" bindtap="onUserTap" hover-class="pressed">
+        <image wx:if="{{item.avatar}}" class="u-avatar" src="{{item.avatar}}" mode="aspectFill" lazy-load />
+        <view wx:else class="u-avatar u-avatar-ph">{{item.avatarChar || '友'}}</view>
+        <view class="u-main">
+          <view class="u-name">
+            {{item.nickname || '用户' + item.userId}}
+            <text class="tag tag-plain" wx:if="{{item.profileVisibility === 'PRIVATE'}}">私密</text>
+          </view>
+          <view class="u-meta">{{item.recipeCount}} 道公开菜谱</view>
+        </view>
+        <button wx:if="{{!item.isSelf}}"
+                class="u-follow {{item.followed ? 'on' : ''}}"
+                catchtap="onToggleFollow" data-id="{{item.userId}}" data-idx="{{index}}">
+          {{item.followed ? '已关注' : '关注'}}
+        </button>
+        <text class="u-self" wx:else>我</text>
+      </view>
+      <view class="empty" wx:if="{{!loading && list.length === 0}}">
+        <text class="empty-icon">{{type === 'following' ? '🧑‍🍳' : '💌'}}</text>
+        {{type === 'following' ? '还没有关注任何人，去广场关注喜欢的厨友吧' : '还没有粉丝，分享菜谱让更多人认识你'}}
+      </view>
+    </view>
+  </view>
+
+  <login-popup id="login-popup" bindlogined="onLogined" />
+</view>

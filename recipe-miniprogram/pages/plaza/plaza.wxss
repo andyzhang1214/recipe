@@ -1,0 +1,280 @@
+/* 广场 */
+.search-bar { padding: 14rpx 28rpx 8rpx; }
+.search-ph {
+  background: var(--fill);
+  border-radius: 999rpx;
+  height: 76rpx;
+  display: flex;
+  align-items: center;
+  padding: 0 32rpx;
+  color: var(--sub);
+  font-size: 28rpx;
+  border: 2rpx solid transparent;
+}
+.search-icon {
+  position: relative;
+  width: 26rpx;
+  height: 26rpx;
+  border: 4rpx solid var(--sub);
+  border-radius: 50%;
+  margin-right: 20rpx;
+  flex-shrink: 0;
+}
+.search-icon::after {
+  content: '';
+  position: absolute;
+  right: -10rpx;
+  bottom: -7rpx;
+  width: 12rpx;
+  height: 4rpx;
+  border-radius: 4rpx;
+  background: var(--sub);
+  transform: rotate(45deg);
+}
+.search-txt { flex: 1; }
+
+.page-content { padding-top: 4rpx; }
+
+.banner {
+  height: 320rpx;
+  border-radius: var(--radius-card);
+  overflow: hidden;
+  margin: 8rpx 0 12rpx;
+  box-shadow: var(--shadow-lg);
+  /* 皮肤描边计入自身宽度，避免撑出横向滚动 */
+  box-sizing: border-box;
+}
+.banner-img { width: 100%; height: 320rpx; }
+
+/* 菜谱瀑布流：上图片·下滑动 + 收藏·关注·星级 */
+.recipe-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  padding-top: 16rpx;
+  margin: 0 -8rpx;
+}
+.recipe-card {
+  width: 340rpx;
+  margin: 0 8rpx 24rpx;
+  border-radius: var(--radius-card);
+  overflow: hidden;
+  background: transparent;
+  transition: transform 0.18s ease;
+  /* 皮肤 padding/描边计入 340rpx，保证两列瀑布流不被撑成单列 */
+  box-sizing: border-box;
+}
+.recipe-card.pressed { transform: scale(0.96); }
+
+/* 封面容器：3:4 比例，多图可滑动 */
+.cover-wrap {
+  position: relative;
+  width: 340rpx;
+  height: 420rpx;
+  border-radius: var(--radius-card);
+  overflow: hidden;
+  background: var(--fill);
+  box-shadow: var(--shadow);
+  box-sizing: border-box;
+}
+.cover-swiper {
+  width: 100%;
+  height: 100%;
+}
+.cover {
+  width: 340rpx;
+  height: 420rpx;
+  background: var(--fill);
+  display: block;
+}
+
+/* 右上角收藏：纯 emoji ♡/♥，无外壳 */
+.cover-fav {
+  position: absolute;
+  right: 18rpx;
+  top: 18rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10rpx;
+  z-index: 2;
+  transition: transform 0.15s ease;
+}
+.cover-fav:active { transform: scale(0.85); }
+.fav-icon {
+  font-size: 52rpx;
+  line-height: 1;
+  color: rgba(255, 255, 255, 0.92);
+  text-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.45);
+  font-weight: 600;
+}
+.cover-fav.on .fav-icon {
+  color: var(--accent);
+  text-shadow: 0 2rpx 12rpx rgba(232, 100, 62, 0.5);
+}
+
+/* 卡片信息区 */
+.info {
+  padding: 18rpx 6rpx 4rpx;
+}
+.title {
+  font-size: 31rpx;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.4;
+  text-align: center;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  letter-spacing: 0.5rpx;
+  margin-bottom: 14rpx;
+}
+
+/* 星级评分行：靠右 */
+.rating-row {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8rpx;
+  font-size: 24rpx;
+  color: var(--sub);
+  font-variant-numeric: tabular-nums;
+  margin-bottom: 16rpx;
+}
+.rating-star { color: var(--warn); font-size: 24rpx; }
+.rating-num { color: var(--text); font-weight: 700; font-size: 26rpx; }
+.meta-dot { color: var(--border); margin: 0 4rpx; }
+
+/* 作者行：头像占两行行高 + 昵称 + 关注按钮 */
+.meta-row {
+  display: flex;
+  align-items: center;
+  gap: 14rpx;
+}
+.meta-row.meta-press { opacity: 0.65; }
+.user-avatar {
+  width: 64rpx;
+  height: 64rpx;
+  border-radius: 50%;
+  background: var(--fill);
+  flex-shrink: 0;
+  box-shadow: var(--shadow-sm);
+}
+.user-name {
+  font-size: 26rpx;
+  color: var(--sub);
+  font-weight: 500;
+  flex-shrink: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.meta-spacer { flex: 1; min-width: 12rpx; }
+/* ⚠️ 微信小程序 <button> 默认 width: 100%，必须显式覆盖 */
+.follow-btn {
+  width: 120rpx !important;
+  margin: 0;
+  padding: 0;
+  height: 48rpx;
+  line-height: 44rpx;
+  font-size: 22rpx;
+  font-weight: 600;
+  letter-spacing: 1rpx;
+  border-radius: var(--radius-btn);
+  border: 2rpx solid var(--accent);
+  color: var(--accent);
+  background: transparent;
+  flex-shrink: 0;
+  text-align: center;
+  box-sizing: border-box;
+}
+.follow-btn::after { border: none; }
+.follow-btn:active { transform: scale(0.95); }
+.follow-btn.on {
+  background: var(--fill);
+  color: var(--sub);
+  border-color: transparent;
+}
+
+.empty.small { padding: 40rpx 0; font-size: 24rpx; }
+
+/* ===== 自定义导航栏「拾味星球」：滚动吸顶 ===== */
+/* 顶部动态留白（状态栏高度）与标题行高度由 wxml 内联 style 提供 */
+.cnav {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  text-align: center;
+  background: var(--nav-blur);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+}
+.cnav-row { display: flex; align-items: center; justify-content: center; }
+.brand-name {
+  font-family: var(--font-title);
+  font-size: 38rpx;
+  font-weight: 700;
+  letter-spacing: 2rpx;
+  color: var(--text);
+  line-height: 1.2;
+}
+/* 可爱风：站酷快乐体大字 */
+.page.theme-cute .brand-name { font-size: 46rpx; font-weight: 400; letter-spacing: 4rpx; }
+
+/* 搜索条：白卡贴纸 */
+.page.theme-cute .search-ph {
+  background: #FFFFFF;
+  border: 3rpx solid #4E2B36;
+  box-shadow: 4rpx 4rpx 0 rgba(78, 43, 54, 0.10);
+}
+
+/* banner：贴纸勾边 */
+.page.theme-cute .banner { border: 3rpx solid #4E2B36; }
+
+/* 卡片：整卡白底贴纸（封面 + 信息同卡） */
+.page.theme-cute .recipe-card {
+  background: #FFFFFF;
+  border: 3rpx solid #4E2B36;
+  border-radius: 36rpx;
+  box-shadow: 6rpx 6rpx 0 rgba(78, 43, 54, 0.10);
+  padding: 14rpx 14rpx 16rpx;
+}
+.page.theme-cute .cover-wrap {
+  width: 100%;
+  height: 380rpx;
+  border-radius: 26rpx;
+  box-shadow: none;
+  border: 1.5rpx solid #EAD2D8;
+}
+.page.theme-cute .cover { width: 100%; height: 380rpx; }
+
+/* 收藏：白底圆钮贴纸（描边爱心） */
+.page.theme-cute .cover-fav {
+  right: 12rpx;
+  top: 12rpx;
+  width: 52rpx;
+  height: 52rpx;
+  padding: 0;
+  background: #FFFFFF;
+  border: 1.5rpx solid #4E2B36;
+  border-radius: 50%;
+  box-shadow: 2rpx 2rpx 0 rgba(78, 43, 54, 0.15);
+}
+.page.theme-cute .fav-icon {
+  font-size: 26rpx;
+  color: #C79AA5;
+  text-shadow: none;
+}
+.page.theme-cute .cover-fav.on .fav-icon { color: #FF6E8E; }
+
+/* 信息区收窄（卡片已有内边距） */
+.page.theme-cute .info { padding: 16rpx 8rpx 2rpx; }
+
+/* 关注按钮：可可勾边贴纸 */
+.page.theme-cute .follow-btn { border: 2rpx solid #4E2B36; }
+.page.theme-cute .follow-btn.on { border-color: transparent; }
+
+/* 空态/结尾文案用手写体点缀 */
+.page.theme-cute .empty { font-family: inherit; }

@@ -1,0 +1,94 @@
+<wxs module="fmt">
+var vis = function(v) {
+  if (v === 'PUBLIC') return '公开主页';
+  if (v === 'PRIVATE') return '私密账号';
+  if (v === 'FAMILY') return '仅圈子可见';
+  return '';
+};
+module.exports = { vis: vis };
+</wxs>
+<view class="page theme-{{theme}} bg-{{skinBg}}" style="{{bgStyle}}">
+  <nav-bar title="{{navTitle}}" back="{{true}}" theme="{{theme}}" />
+  <block wx:if="{{profile}}">
+
+    <!-- ===== 主页头部（小红书式：居中大头像 → 昵称 → 数据栏） ===== -->
+    <view class="profile-head">
+      <view class="avatar-ring">
+        <image class="big-avatar" src="{{profile.user.avatar || '/assets/placeholder.png'}}" mode="aspectFill" lazy-load bindtap="onPreviewAvatar" />
+      </view>
+      <view class="nickname">{{profile.user.nickname || '厨友'}}</view>
+      <view class="uid-row">
+        <text>UID {{profile.user.id}}</text>
+        <text class="dot">·</text>
+        <text class="vis {{profile.user.profileVisibility === 'PRIVATE' ? 'vis-private' : ''}}">{{fmt.vis(profile.user.profileVisibility)}}</text>
+      </view>
+
+      <!-- 数据栏：关注/粉丝可点进列表 -->
+      <view class="stats" wx:if="{{!profile.locked || profile.isSelf}}">
+        <view class="stat" hover-class="stat-press" data-type="following" bindtap="onStatTap">
+          <view class="stat-num">{{profile.followingCount}}</view>
+          <view class="stat-label">关注</view>
+        </view>
+        <view class="stat-divider"></view>
+        <view class="stat" hover-class="stat-press" data-type="fans" bindtap="onStatTap">
+          <view class="stat-num">{{profile.fansCount}}</view>
+          <view class="stat-label">粉丝</view>
+        </view>
+        <view class="stat-divider"></view>
+        <view class="stat">
+          <view class="stat-num">{{profile.recipeCount}}</view>
+          <view class="stat-label">公开菜谱</view>
+        </view>
+      </view>
+
+      <!-- 操作区：自己→编辑资料；他人→关注/已关注（私密账号也可关注） -->
+      <view class="ops">
+        <button wx:if="{{profile.isSelf}}" class="btn btn-plain op-btn" bindtap="onEditProfile">编辑资料</button>
+        <block wx:else>
+          <button class="btn {{profile.followed ? 'btn-plain' : 'btn-primary'}} op-btn" bindtap="onToggleFollow">
+            {{profile.followed ? '已关注' : '+ 关注'}}
+          </button>
+        </block>
+      </view>
+    </view>
+
+    <!-- ===== 私密/仅圈内可见锁定态 ===== -->
+    <view class="locked-card card" wx:if="{{profile.locked && !profile.isSelf}}">
+      <view class="lock-icon">🔒</view>
+      <view class="lock-title">{{profile.user.profileVisibility === 'PRIVATE' ? '该用户已设置私密账号' : '该用户主页仅圈子内可见'}}</view>
+      <view class="lock-sub">{{profile.user.profileVisibility === 'PRIVATE' ? '仅自己可以查看主页内容' : '加入同圈子后即可查看 TA 的主页'}}</view>
+    </view>
+
+    <!-- ===== 公开菜谱瀑布流 ===== -->
+    <view class="page-content" wx:if="{{!profile.locked || profile.isSelf}}">
+      <view class="grid-head">
+        <text class="grid-title">TA 的菜谱</text>
+        <text class="grid-count" wx:if="{{total > 0}}">{{total}} 道</text>
+      </view>
+      <view class="recipe-grid">
+        <view class="recipe-card" wx:for="{{recipes}}" wx:key="id" data-id="{{item.id}}" bindtap="onRecipeTap" hover-class="pressed">
+          <view class="cover-wrap">
+            <image class="cover" src="{{item.cover || (item.covers && item.covers[0]) || '/assets/placeholder.png'}}"
+                   mode="aspectFill" lazy-load />
+          </view>
+          <view class="info">
+            <view class="title">{{item.title}}</view>
+            <view class="rating-row">
+              <text class="rating-star">★</text>
+              <text class="rating-num">{{item.avgStars || 0}}</text>
+              <text class="meta-dot">·</text>
+              <text>{{item.ratingCount || 0}} 评</text>
+            </view>
+          </view>
+        </view>
+      </view>
+      <view class="empty" wx:if="{{!loading && recipes.length === 0}}">
+        <text class="empty-icon">🍽️</text>
+        {{profile.isSelf ? '还没有公开的菜谱，去发布一道吧' : 'TA 还没有公开分享菜谱'}}
+      </view>
+      <view class="empty small" wx:if="{{finished && recipes.length > 0}}">— 没有更多了 —</view>
+    </view>
+  </block>
+
+  <login-popup id="login-popup" bindlogined="onLogined" />
+</view>

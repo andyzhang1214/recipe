@@ -1,0 +1,324 @@
+<wxs module="fmt">
+// 可见范围：枚举转中文
+var vis = function(v) {
+  if (v === 'PUBLIC') return '公开';
+  if (v === 'PRIVATE') return '私密';
+  if (v === 'FAMILY') return '圈内可见';
+  return v || '';
+};
+module.exports = { vis: vis };
+</wxs>
+<view class="page theme-{{theme}} bg-{{skinBg}}" style="{{bgStyle}}">
+  <nav-bar title="我的" theme="{{theme}}" />
+  <view class="page-content">
+
+    <!-- 用户卡：未登录（拾味小星球 + 权益引导） -->
+    <view class="card guest-card" wx:if="{{!user}}">
+      <view class="guest-hero">
+        <view class="planet-ring"></view>
+        <view class="planet"><text class="planet-face">🍳</text></view>
+        <text class="sat sat-a">⭐</text>
+        <text class="sat sat-b">🥬</text>
+        <text class="sat sat-c">✨</text>
+      </view>
+      <view class="guest-title">你好，美食家</view>
+      <view class="guest-sub">登录暖暖，记录拿手菜，和家人朋友分享每一餐</view>
+      <view class="guest-chips">
+        <view class="g-chip"><text class="g-chip-ico">📝</text>记录菜谱</view>
+        <view class="g-chip"><text class="g-chip-ico">⭐</text>评星收藏</view>
+        <view class="g-chip"><text class="g-chip-ico">🏠</text>队伍共享</view>
+      </view>
+      <button class="btn btn-primary guest-login-btn" bindtap="onLoginTap">立即登录</button>
+    </view>
+
+    <view class="card user-card" wx:else>
+      <view class="uc-top">
+        <view class="avatar-edit" bindtap="openEditProfile">
+          <image class="avatar avatar-img" src="{{user.avatar || '/assets/placeholder.png'}}" mode="aspectFill" lazy-load />
+        </view>
+        <view class="user-info" bindtap="openEditProfile">
+          <view class="nickname">{{user.nickname || '微信用户'}}</view>
+          <view class="sub">UID {{user.id || user.uid}} · <text class="edit-link">编辑资料</text></view>
+        </view>
+        <view class="logout" bindtap="onLogout">退出</view>
+      </view>
+      <!-- 数据栏：关注 / 粉丝，点按进入列表（页面下滑即我的主页，无需单独入口） -->
+      <view class="uc-stats">
+        <view class="uc-stat" hover-class="uc-stat-press" data-type="following" bindtap="onStatTap">
+          <view class="uc-stat-num">{{followingCount}}</view>
+          <view class="uc-stat-label">关注</view>
+        </view>
+        <view class="uc-divider"></view>
+        <view class="uc-stat" hover-class="uc-stat-press" data-type="fans" bindtap="onStatTap">
+          <view class="uc-stat-num">{{fansCount}}</view>
+          <view class="uc-stat-label">粉丝</view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 待学习菜谱入口 -->
+    <view class="card learn-entry" wx:if="{{user}}" hover-class="pressed" bindtap="onLearningTap">
+      <view class="le-icon">📖</view>
+      <view class="le-main">
+        <view class="le-title">待学习菜谱</view>
+        <view class="le-sub">{{learningCount > 0 ? '正在学 ' + learningCount + ' 道菜' : '心愿单里想学的菜都在这'}}</view>
+      </view>
+      <text class="le-arrow">›</text>
+    </view>
+
+    <!-- 分组设置 -->
+    <view class="card grouped">
+      <view class="cell" hover-class="pressed" bindtap="openTheme">
+        <view class="cell-label">外观</view>
+        <view class="cell-value">
+          <text class="theme-dot" style="background: {{currentPreview}};"></text>
+          <text>{{currentThemeName}} ›</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 菜谱 tab 切换 -->
+    <view class="card">
+      <view class="seg">
+        <view class="seg-item {{tab === 'PUBLISHED' ? 'active' : ''}}" data-tab="PUBLISHED" bindtap="onTab">已发布</view>
+        <view class="seg-item {{tab === 'DRAFT' ? 'active' : ''}}" data-tab="DRAFT" bindtap="onTab">草稿</view>
+        <view class="seg-item {{tab === 'FAVORITES' ? 'active' : ''}}" data-tab="FAVORITES" bindtap="onTab">收藏</view>
+      </view>
+    </view>
+
+    <!-- 菜谱卡片网格 -->
+    <view class="rc-grid">
+      <view class="rc-card" wx:for="{{recipes}}" wx:key="id" data-id="{{item.id}}" bindtap="onRecipeTap" hover-class="rc-press">
+        <view class="rc-cover-box">
+          <image wx:if="{{item.cover}}" class="rc-cover" src="{{item.cover}}" mode="aspectFill" lazy-load />
+          <view wx:else class="rc-ph">{{item.titleChar}}</view>
+          <view wx:if="{{tab !== 'FAVORITES'}}" class="rc-lock" catchtap="onLockTap" data-index="{{index}}">
+            {{item.visibility === 'PRIVATE' ? '🔒' : '🔓'}}
+          </view>
+        </view>
+        <view class="rc-body">
+          <view class="rc-title">{{item.title}}</view>
+          <view class="rc-meta">
+            <text class="tag {{item.visibility === 'PUBLIC' ? 'tag-green' : item.visibility === 'PRIVATE' ? 'tag-plain' : 'tag-blue'}}">{{fmt.vis(item.visibility)}}</text>
+            <text class="rc-stars">★ {{item.avgStars}}</text>
+          </view>
+          <view class="rc-author" wx:if="{{tab === 'FAVORITES' && item.author}}">@{{item.author}}</view>
+        </view>
+        <!-- 自己的菜谱：编辑 / 删除 -->
+        <view class="rc-ops" wx:if="{{tab !== 'FAVORITES'}}">
+          <view class="rc-act edit" hover-class="rc-act-press" data-index="{{index}}" catchtap="onEditRecipe">编辑</view>
+          <view class="rc-act del" hover-class="rc-act-press" data-index="{{index}}" catchtap="onDeleteRecipe">删除</view>
+        </view>
+      </view>
+    </view>
+    <view class="empty" wx:if="{{recipes.length === 0}}">
+      <text class="empty-icon">🍳</text>
+      {{user ? '暂无菜谱，去发布一道吧' : '登录后查看我的菜谱'}}
+    </view>
+
+    <!-- 外观设置面板：一级选风格（3 banner），二级展开对应颜色选择 -->
+    <view class="mask" wx:if="{{showTheme}}" bindtap="closeTheme" />
+    <view class="sheet theme-sheet" wx:if="{{showTheme}}">
+      <view class="sheet-title">外观</view>
+
+      <!-- 一级：三个风格 banner，点击切换风格并展开颜色选择 -->
+      <view class="style-row">
+        <view class="style-banner {{styleTab === 'cute' ? 'active' : ''}}" hover-class="style-press"
+              data-style="cute" bindtap="onStyleTap">
+          <view class="skin-mini cute">
+            <view class="sm-bar"></view>
+            <view class="sm-card">
+              <view class="sm-line w70"></view>
+              <view class="sm-line w45"></view>
+              <view class="sm-btn">做菜</view>
+            </view>
+            <view class="sm-chips">
+              <view class="sm-chip c1"></view>
+              <view class="sm-chip c2"></view>
+              <view class="sm-chip c3"></view>
+            </view>
+          </view>
+          <view class="style-info">
+            <view class="style-name">可爱风</view>
+            <view class="style-sub">软软食堂</view>
+          </view>
+          <view class="style-check" wx:if="{{styleTab === 'cute'}}">✓</view>
+        </view>
+
+        <view class="style-banner {{styleTab === 'clean' ? 'active' : ''}}" hover-class="style-press"
+              data-style="clean" bindtap="onStyleTap">
+          <view class="skin-mini clean">
+            <view class="sm-bar"></view>
+            <view class="sm-card">
+              <view class="sm-line w70"></view>
+              <view class="sm-line w45"></view>
+              <view class="sm-btn">做菜</view>
+            </view>
+            <view class="sm-chips">
+              <view class="sm-chip c1"></view>
+              <view class="sm-chip c2"></view>
+              <view class="sm-chip c3"></view>
+            </view>
+          </view>
+          <view class="style-info">
+            <view class="style-name">简洁风</view>
+            <view class="style-sub">厨房手记</view>
+          </view>
+          <view class="style-check" wx:if="{{styleTab === 'clean'}}">✓</view>
+        </view>
+
+        <view class="style-banner {{styleTab === 'classic' ? 'active' : ''}}" hover-class="style-press"
+              data-style="classic" bindtap="onStyleTap">
+          <view class="skin-mini classic">
+            <view class="sm-bar"></view>
+            <view class="sm-card">
+              <view class="sm-line w70"></view>
+              <view class="sm-line w45"></view>
+              <view class="sm-btn">做菜</view>
+            </view>
+            <view class="sm-chips">
+              <view class="sm-chip c1"></view>
+              <view class="sm-chip c2"></view>
+              <view class="sm-chip c3"></view>
+            </view>
+          </view>
+          <view class="style-info">
+            <view class="style-name">经典风</view>
+            <view class="style-sub">原汁原味</view>
+          </view>
+          <view class="style-check" wx:if="{{styleTab === 'classic'}}">✓</view>
+        </view>
+      </view>
+
+      <!-- 二级：皮肤背景色（可爱 / 简洁风，每个皮肤独立记忆） -->
+      <block wx:if="{{styleTab === 'cute' || styleTab === 'clean'}}">
+        <view class="skin-label">背景色</view>
+        <view class="bg-row">
+          <view class="bg-opt {{skinBg === item.key ? 'active' : ''}}" wx:for="{{skinBgs}}" wx:key="key"
+                data-key="{{item.key}}" data-scope="skin" bindtap="onBgOptionTap">
+            <view class="bg-swatch sw-{{item.key}}"
+                  style="{{item.key === 'custom' && skinCustomColor ? 'background-color: ' + skinCustomColor + ';' : ''}}">
+              <text wx:if="{{item.key === 'custom' && !skinCustomColor}}" class="bg-palette">🎨</text>
+              <text class="bg-check" wx:if="{{skinBg === item.key}}">✓</text>
+            </view>
+            <view class="bg-name">{{item.name}}</view>
+          </view>
+        </view>
+      </block>
+
+      <!-- 二级：经典配色（经典风） -->
+      <block wx:else>
+        <view class="skin-label">经典配色</view>
+        <view class="theme-grid">
+          <view class="theme-item {{theme === item.key ? 'active' : ''}}" wx:for="{{colorList}}" wx:key="key"
+                data-key="{{item.key}}" bindtap="onColorOptionTap">
+            <view class="theme-swatch" style="background: {{item.key === 'custom' ? (classicCustom || item.preview) : item.preview}};">
+              <text wx:if="{{item.key === 'custom' && !classicCustom}}" class="theme-palette">🎨</text>
+              <text class="check" wx:if="{{theme === item.key}}">✓</text>
+            </view>
+            <view class="theme-name">{{item.name}}</view>
+            <view class="theme-desc">{{item.desc}}</view>
+          </view>
+        </view>
+      </block>
+      <button class="btn btn-ghost sheet-close" bindtap="closeTheme">完成</button>
+    </view>
+
+    <!-- 调色盘弹层：预设色板 + RGB 滑块实时预览 -->
+    <view class="mask" wx:if="{{showPicker}}" bindtap="closePicker" />
+    <view class="sheet picker-sheet" wx:if="{{showPicker}}">
+      <view class="sheet-title">调色盘</view>
+      <view class="picker-preview">
+        <view class="pp-dot" style="background: {{pickerColor}};"></view>
+        <view class="pp-meta">
+          <view class="pp-hex">{{pickerColor}}</view>
+          <view class="pp-tip">拖动滑块或点选预设色</view>
+        </view>
+      </view>
+      <view class="pp-presets">
+        <view class="pp-cell" wx:for="{{presetColors}}" wx:key="*this"
+              style="background: {{item}};" data-color="{{item}}" bindtap="onPresetTap">
+          <text class="pp-check" wx:if="{{item === pickerColor}}">✓</text>
+        </view>
+      </view>
+      <view class="pp-sliders">
+        <view class="pp-row">
+          <text class="pp-tag tag-r">R</text>
+          <slider class="pp-slider" min="0" max="255" value="{{pickerR}}" activeColor="#E94B6A"
+                  block-size="20" data-ch="r" bindchanging="onSlide" bindchange="onSlide" />
+          <text class="pp-val">{{pickerR}}</text>
+        </view>
+        <view class="pp-row">
+          <text class="pp-tag tag-g">G</text>
+          <slider class="pp-slider" min="0" max="255" value="{{pickerG}}" activeColor="#1FA97D"
+                  block-size="20" data-ch="g" bindchanging="onSlide" bindchange="onSlide" />
+          <text class="pp-val">{{pickerG}}</text>
+        </view>
+        <view class="pp-row">
+          <text class="pp-tag tag-b">B</text>
+          <slider class="pp-slider" min="0" max="255" value="{{pickerB}}" activeColor="#4A90C9"
+                  block-size="20" data-ch="b" bindchanging="onSlide" bindchange="onSlide" />
+          <text class="pp-val">{{pickerB}}</text>
+        </view>
+      </view>
+      <button class="btn btn-primary sheet-close" bindtap="confirmPicker">使用该颜色</button>
+    </view>
+
+  </view>
+
+  <!-- 修改头像昵称弹层 -->
+  <view class="mask" wx:if="{{showEditProfile}}" bindtap="closeEditProfile" />
+  <view class="sheet" wx:if="{{showEditProfile}}">
+    <view class="sheet-title">修改头像昵称</view>
+    <button class="edit-avatar-btn" open-type="chooseAvatar" bindchooseavatar="onEditAvatar">
+      <image wx:if="{{editAvatar}}" class="edit-avatar-img" src="{{editAvatar}}" mode="aspectFill" />
+      <text wx:else>＋</text>
+    </button>
+    <view class="edit-avatar-tip">点头像选用微信头像或从相册上传</view>
+    <input class="input" type="nickname" placeholder="输入昵称" bindinput="onEditNickname" value="{{editNickname}}" />
+    <view class="sheet-label">主页可见性</view>
+    <picker range="{{visibilityOptions}}" range-key="label" bindchange="onEditVisibility">
+      <view class="input">{{editVisibilityLabel}} ▾</view>
+    </picker>
+    <view class="visibility-tip">{{editVisibilityTip}}</view>
+    <button class="btn btn-primary sheet-close" bindtap="saveProfile" loading="{{savingProfile}}">保存</button>
+  </view>
+
+  <!-- 可见性快捷弹窗：点击锁标弹出 -->
+  <view class="mask" wx:if="{{showVisibility}}" bindtap="closeVisibility" />
+  <view class="sheet" wx:if="{{showVisibility}}">
+    <view class="sheet-title">可见范围</view>
+    <view class="vis-recipe-name">{{visRecipe.title}}</view>
+    <view class="vis-options">
+      <view class="vis-opt {{visRecipe.visibility === 'PUBLIC' ? 'active' : ''}}" hover-class="pressed"
+            data-visibility="PUBLIC" bindtap="onVisibilityPick">
+        <view class="vis-opt-head">
+          <text class="vis-opt-icon">🌐</text>
+          <text class="vis-opt-label">公开</text>
+          <text class="vis-opt-check" wx:if="{{visRecipe.visibility === 'PUBLIC'}}">✓</text>
+        </view>
+        <view class="vis-opt-tip">所有人都能在广场看到这道菜</view>
+      </view>
+      <view class="vis-opt {{visRecipe.visibility === 'FAMILY' ? 'active' : ''}}" hover-class="pressed"
+            data-visibility="FAMILY" bindtap="onVisibilityPick">
+        <view class="vis-opt-head">
+          <text class="vis-opt-icon">👥</text>
+          <text class="vis-opt-label">队伍可见</text>
+          <text class="vis-opt-check" wx:if="{{visRecipe.visibility === 'FAMILY'}}">✓</text>
+        </view>
+        <view class="vis-opt-tip">同队伍成员可见，不进广场</view>
+      </view>
+      <view class="vis-opt {{visRecipe.visibility === 'PRIVATE' ? 'active' : ''}}" hover-class="pressed"
+            data-visibility="PRIVATE" bindtap="onVisibilityPick">
+        <view class="vis-opt-head">
+          <text class="vis-opt-icon">🔒</text>
+          <text class="vis-opt-label">私密菜单</text>
+          <text class="vis-opt-check" wx:if="{{visRecipe.visibility === 'PRIVATE'}}">✓</text>
+        </view>
+        <view class="vis-opt-tip">仅自己可见，他人无法查看</view>
+      </view>
+    </view>
+  </view>
+
+  <login-popup id="login-popup" bindlogined="onLogined" />
+</view>

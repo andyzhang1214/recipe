@@ -1,0 +1,71 @@
+<view class="page theme-{{theme}}">
+  <nav-bar title="用户协议" back="{{true}}" theme="{{theme}}" />
+  <view class="container">
+    <view class="title">用户协议</view>
+    <view class="subtitle">最后更新：2026 年 8 月 21 日</view>
+
+    <view class="section">
+      <view class="h2">一、协议接受</view>
+      <view class="p">欢迎您使用"暖暖的餐桌"小程序（以下简称"本小程序"）。本小程序由个人开发者独立开发，仅用于个人学习与作品展示用途。在使用本小程序之前，请您仔细阅读本《用户协议》（以下简称"本协议"）。一旦您开始使用本小程序，即视为您已阅读、理解并同意接受本协议的全部条款。</view>
+    </view>
+
+    <view class="section">
+      <view class="h2">二、服务内容</view>
+      <view class="p">本小程序主要提供以下功能：</view>
+      <view class="li">1. 菜谱浏览：查看由其他用户发布的家庭菜谱；</view>
+      <view class="li">2. 菜谱发布：用户自行发布原创菜谱（含标题、食材、步骤、封面图、步骤图）；</view>
+      <view class="li">3. 收藏与评分：对感兴趣的菜谱进行收藏与星级评分；</view>
+      <view class="li">4. 评论互动：对菜谱进行评论；</view>
+      <view class="li">5. 冰箱管理：记录家庭现有食材；</view>
+      <view class="li">6. 烹饪计时：内置计时器辅助烹饪流程；</view>
+      <view class="li">7. 家庭圈层：创建或加入家庭小组，方便家庭成员间协同点餐。</view>
+    </view>
+
+    <view class="section">
+      <view class="h2">三、用户行为规范</view>
+      <view class="p">您承诺在使用本小程序过程中遵守中华人民共和国法律法规，不得利用本小程序制作、复制、发布、传播以下内容：</view>
+      <view class="li">1. 违反宪法确定的基本原则的；</view>
+      <view class="li">2. 危害国家安全、泄露国家秘密、颠覆国家政权、破坏国家统一的；</view>
+      <view class="li">3. 损害国家荣誉和利益的；</view>
+      <view class="li">4. 煽动民族仇恨、民族歧视，破坏民族团结的；</view>
+      <view class="li">5. 破坏国家宗教政策，宣扬邪教和封建迷信的；</view>
+      <view class="li">6. 散布谣言、扰乱社会秩序、破坏社会稳定的；</view>
+      <view class="li">7. 散布淫秽、色情、赌博、暴力、凶杀、恐怖或者教唆犯罪的；</view>
+      <view class="li">8. 侮辱或者诽谤他人，侵害他人合法权益的；</view>
+      <view class="li">9. 含有法律、行政法规禁止的其他内容的。</view>
+      <view class="p">您承诺所发布的菜谱内容均为原创或已获得合法授权，不得侵犯任何第三方著作权、商标权、肖像权、名誉权等合法权益。</view>
+    </view>
+
+    <view class="section">
+      <view class="h2">四、内容审核与过滤</view>
+      <view class="p">本小程序对您发布的菜谱标题、描述、步骤、评论等内容启用微信内容安全接口进行审核。如系统识别到疑似违规内容，本小程序有权依据《网络安全法》《个人信息保护法》等相关法律法规采取拦截、删除、限制等措施，由此造成的后果由您本人承担。</view>
+    </view>
+
+    <view class="section">
+      <view class="h2">五、知识产权</view>
+      <view class="p">本小程序的代码、界面设计、图标、文字等非用户上传内容的著作权归开发者所有。用户在征得第三方合法授权后，可将其原创菜谱内容（包括封面图、步骤图、文字说明等）发布至本小程序，并保留其作者署名权。您理解并同意，您发布到本小程序的内容，开发者仅在为您提供菜谱展示与浏览服务所必要的范围内进行存储与展示。</view>
+    </view>
+
+    <view class="section">
+      <view class="h2">六、协议的变更与终止</view>
+      <view class="p">开发者有权根据业务调整、法律法规变更等情况对本协议进行修订，修订后的协议将在本页面更新。如您不同意修订后的协议，请立即停止使用本小程序；继续使用即视为接受变更。本小程序为个人作品展示用途，开发者保留随时停止运营本小程序的权利，届时将提前通过本小程序公告。</view>
+    </view>
+
+    <view class="section">
+      <view class="h2">七、免责声明</view>
+      <view class="p">本小程序仅作为家庭烹饪爱好者之间的内容分享平台，所展示的菜谱内容仅供参考，不构成任何医疗、营养、健康建议。用户在参考菜谱进行烹饪时，应结合自身实际情况（如食物过敏、忌口、健康状况）做出判断。因参考本小程序菜谱而产生的任何健康问题或财产损失，开发者不承担任何责任。</view>
+    </view>
+
+    <view class="section">
+      <view class="h2">八、法律适用与争议解决</view>
+      <view class="p">本协议的订立、执行和解释均适用中华人民共和国法律。因本协议产生的任何争议，双方应友好协商解决；协商不成的，任何一方均有权将争议提交开发者所在地有管辖权的人民法院诉讼解决。</view>
+    </view>
+
+    <view class="section">
+      <view class="h2">九、联系方式</view>
+      <view class="p">如您对本协议有任何疑问、意见或建议，可通过本小程序的"我的-意见反馈"入口向开发者反馈。</view>
+    </view>
+
+    <view class="footer">本协议最终解释权归开发者所有</view>
+  </view>
+</view>

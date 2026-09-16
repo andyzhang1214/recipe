@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>搜索框调整 · 方案对比效果图</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-font-smoothing:antialiased}
+body{font-family:"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;background:#EFEDE9;padding:48px 28px 90px;color:#2A2622}
+
+/* ===== 文档头 ===== */
+.doc{max-width:1480px;margin:0 auto 40px;background:#fff;border:1px solid #E4E1DC;border-radius:16px;padding:34px 38px 30px}
+.doc-kicker{display:inline-flex;align-items:center;gap:8px;font:700 11px/1;letter-spacing:2px;color:#C2410C}
+.doc-kicker::before{content:"";width:20px;height:2px;background:#C2410C}
+.doc h1{font-size:30px;font-weight:700;letter-spacing:-.5px;margin:12px 0 8px}
+.doc p{font-size:13.5px;color:#6B665F;line-height:1.8;max-width:860px}
+.cmp{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:22px}
+.cmp>div{border:1px solid #E4E1DC;border-radius:12px;padding:16px 18px;font-size:12.5px;line-height:1.75;color:#6B665F;background:#FBFAF8}
+.cmp b{display:block;font-size:13px;color:#2A2622;margin-bottom:6px}
+.cmp .cur b{color:#B42318}
+.cmp .pa b::after,.cmp .pb b::after{content:"推荐";margin-left:8px;font:600 10px/1;color:#fff;background:#C2410C;border-radius:999px;padding:3px 8px;vertical-align:2px}
+.cmp .pb b::after{content:"备选"}
+
+/* ===== 画廊 ===== */
+.gallery{max-width:1480px;margin:0 auto}
+.sec{margin-bottom:46px}
+.sec-h{display:flex;align-items:baseline;gap:12px;margin-bottom:6px}
+.sec-h b{font-size:19px;font-weight:700;letter-spacing:.5px}
+.sec-h .tagchip{font:600 11px/1;color:#fff;background:#2A2622;border-radius:999px;padding:4px 10px}
+.sec-h .why{margin-left:auto;font-size:12px;color:#8A857E}
+.sec p{font-size:13px;color:#6B665F;line-height:1.8;max-width:900px;margin-bottom:22px}
+.sec p b{color:#2A2622}
+.row{display:flex;flex-wrap:wrap;gap:36px 30px;justify-content:flex-start}
+.shot{width:375px}
+.shot-label{text-align:center;margin:0 0 12px;font:600 12px/1.4;color:#6B665F}
+.shot-label b{display:inline-block;background:#fff;border:1px solid #E4E1DC;border-radius:7px;padding:5px 14px;letter-spacing:.5px}
+.shot-label span{display:block;font-size:10.5px;color:#A8A29A;margin-top:5px;letter-spacing:1px}
+
+/* ===== 手机框 ===== */
+.phone{width:375px;height:620px;border:1px solid #141312;border-radius:38px;box-shadow:0 14px 34px rgba(20,19,18,.13);display:flex;flex-direction:column;overflow:hidden;position:relative;background:var(--bg)}
+.st{flex:0 0 auto;display:flex;justify-content:space-between;align-items:center;padding:15px 26px 5px;font:600 13px/1;color:var(--text)}
+.st-r{display:flex;gap:5px;align-items:center}
+.nv{flex:0 0 44px;display:flex;align-items:center;justify-content:center;position:relative;font:600 15px/1;color:var(--text);background:var(--navbg);border-bottom:var(--navline)}
+.nv .bk{position:absolute;left:18px;font-size:22px;color:var(--sub);font-weight:300}
+.scr{flex:1;overflow:hidden;position:relative}
+.fade{position:absolute;left:0;right:0;bottom:0;height:80px;background:linear-gradient(180deg,rgba(0,0,0,0),var(--bg));pointer-events:none;z-index:4}
+
+/* ===== 三套主题变量（1rpx = 0.5px） ===== */
+.p-light{--bg:#FAF6F1;--card:#FFFFFF;--fill:rgba(120,100,80,.10);--text:#2F2A26;--sub:#8B7F73;--line:rgba(47,42,38,.08);
+  --accent:#E8643E;--grad:linear-gradient(135deg,#F0805A,#E25A3C);--star:#F5A623;
+  --r-card:16px;--r-md:12px;--r-pill:999px;--r-input:999px;--r-tag:999px;--r-btn:999px;
+  --outline:1px solid rgba(255,255,255,.55);--hard:none;--sm:0 2px 8px rgba(176,128,86,.09);--glow:0 5px 14px rgba(240,128,90,.30);
+  --navbg:#FAF6F1;--navline:1px solid transparent}
+.p-cute{--bg:#FFF6EF;--card:#FFFFFF;--fill:#FBEFE6;--text:#4E2B36;--sub:#A9868F;--line:#EAD2D8;
+  --accent:#F4577C;--grad:linear-gradient(135deg,#FFA3B8,#FF6E8E);--star:#FFB53C;
+  --r-card:22px;--r-md:18px;--r-pill:999px;--r-input:999px;--r-tag:999px;--r-btn:999px;
+  --outline:1.5px solid #4E2B36;--hard:4px 4px 0 rgba(78,43,54,.10);--sm:4px 4px 0 rgba(78,43,54,.08);--glow:3px 3px 0 rgba(78,43,54,.16);
+  --navbg:#FFF6EF;--navline:1px solid transparent}
+.p-clean{--bg:#F5F4F2;--card:#FFFFFF;--fill:#F0EEEB;--text:#1B1A18;--sub:#7A7670;--line:rgba(27,26,24,.10);
+  --accent:#C2410C;--grad:#171614;--star:#D99128;
+  --r-card:8px;--r-md:6px;--r-pill:999px;--r-input:6px;--r-tag:4px;--r-btn:6px;
+  --outline:1px solid rgba(27,26,24,.08);--hard:none;--sm:0 1px 4px rgba(20,19,18,.05);--glow:none;
+  --navbg:#FFFFFF;--navline:1px solid #E7E5E1}
+
+/* ===== 搜索区（现状） ===== */
+.now-row{display:flex;gap:8px;padding:10px 14px 4px}
+.now-wrap{flex:1;display:flex;align-items:center;background:var(--fill);border-radius:var(--r-input);padding:0 15px;height:42px}
+.now-btn{height:42px;line-height:42px;font-size:13.5px;font-weight:600;color:#fff;background:var(--grad);border-radius:var(--r-btn);padding:0 20px;flex-shrink:0;box-shadow:var(--glow);border:var(--outline);display:flex;align-items:center;justify-content:center}
+.p-light .now-btn{border:none}
+.p-clean .now-btn{box-shadow:none;border:none}
+
+/* ===== 方案A：内嵌圆钮 ===== */
+.a-wrap{display:flex;align-items:center;background:var(--card);border-radius:var(--r-input);padding:0 7px 0 15px;height:42px;margin:10px 14px 4px;box-shadow:var(--sm);border:var(--outline)}
+.p-light .a-wrap{background:var(--fill);border:1px solid transparent;box-shadow:none}
+.a-icon{flex-shrink:0;margin-right:9px;color:var(--sub)}
+.a-text{flex:1;font-size:14.5px;color:var(--text);min-width:0;white-space:nowrap}
+.a-ph{color:var(--sub)}
+.a-go{width:30px;height:30px;flex-shrink:0;border-radius:var(--r-go);background:var(--grad);display:flex;align-items:center;justify-content:center;box-shadow:var(--glow);border:var(--outline)}
+.p-light .a-go{border:none}
+.a-go svg{color:#fff}
+.p-cute .a-go{--r-go:999px}
+.p-light .a-go{--r-go:999px}
+.p-clean .a-go{--r-go:5px;box-shadow:none;border:none}
+.a-go.dim{opacity:.45;box-shadow:none}
+.a-note{margin:6px 16px 0;font-size:10.5px;color:var(--sub);display:flex;align-items:center;gap:5px}
+.a-note i{font-style:normal;opacity:.7}
+
+/* ===== 方案B：全宽按钮置底 ===== */
+.b-wrap{display:flex;align-items:center;background:var(--card);border-radius:var(--r-input);padding:0 15px;height:42px;margin:10px 14px 0;box-shadow:var(--sm);border:var(--outline)}
+.p-light .b-wrap{background:var(--fill);border:1px solid transparent;box-shadow:none}
+.b-btn{height:42px;margin:8px 14px 0;border-radius:var(--r-btn);background:var(--grad);color:#fff;font-size:15px;font-weight:600;letter-spacing:4px;display:flex;align-items:center;justify-content:center;box-shadow:var(--glow);border:var(--outline)}
+.p-light .b-btn{border:none}
+.p-clean .b-btn{letter-spacing:2px;box-shadow:none;border:none}
+
+/* ===== 热门搜索 + 结果卡（共用上下文） ===== */
+.hot{padding:16px 14px 6px}
+.hot-t{font-size:13px;color:var(--sub);font-weight:500;letter-spacing:.5px;margin-bottom:11px}
+.tags{display:flex;flex-wrap:wrap;gap:9px}
+.tag{padding:6px 16px;border-radius:var(--r-tag);background:var(--card);color:var(--text);font-size:13px;font-weight:500;box-shadow:var(--sm);border:var(--outline)}
+.p-light .tag{border:1px solid transparent;box-shadow:var(--sm)}
+.item{display:flex;gap:11px;background:var(--card);border-radius:var(--r-card);padding:13px;margin:12px 14px 0;align-items:center;box-shadow:var(--sm);border:var(--outline)}
+.item img{width:75px;height:75px;border-radius:var(--r-md);object-fit:cover;flex-shrink:0}
+.item .t{font-size:15.5px;font-weight:700;color:var(--text)}
+.item .m{font-size:12px;color:var(--sub);margin-top:6px}
+.item .m .st2{color:var(--star)}
+.item .ch{color:var(--sub);font-size:20px;opacity:.5;margin-left:auto}
+img{display:block}
+</style>
+</head>
+<body>
+
+<header class="doc">
+  <span class="doc-kicker">SEARCH BAR REDESIGN</span>
+  <h1>搜索框调整 · 两个方案</h1>
+  <p>现状问题：搜索按钮与输入框并排，按钮高 84rpx、内边距 0 40rpx，占去近 40% 行宽；可爱风下叠加 3rpx 可可勾边 + 硬投影 + 粉渐变，成为整页最重的元素，输入空间被明显压缩。两个方案均让输入框占满整行，差别在「搜索」动作的落点。</p>
+  <div class="cmp">
+    <div class="cur"><b>现状 · 并排大按钮</b>输入区拥挤、比例失衡；可爱风下按钮视觉重量远超输入框。</div>
+    <div class="pa"><b>方案 A · 内嵌圆钮</b>输入框占满整行，右端内嵌 60rpx 圆形小钮；键盘「搜索」键同时触发（代码已有 bindconfirm）。主流搜索交互，最干净。</div>
+    <div class="pb"><b>方案 B · 按钮放下面</b>输入框占满整行，下方整宽主按钮。CTA 明确、触达面积大；代价是多占一行高度，热门内容下移。</div>
+  </div>
+</header>
+
+<main class="gallery">
+
+<!-- ===== 现状参考 ===== -->
+<section class="sec">
+  <div class="sec-h"><b>现状参考</b><span class="tagchip">AS-IS</span><span class="why">截图还原 · 三套皮肤</span></div>
+  <p>按钮与输入框 1:0.6 分行，可爱风下问题最明显。</p>
+  <div class="row">
+    <div class="shot"><div class="shot-label"><b>现状 · 经典</b><span>light</span></div>
+      <div class="phone p-light">
+        <div class="st"><span>2:15</span><span class="st-r"><svg width="16" height="11" viewBox="0 0 17 11" fill="currentColor"><rect y="7" width="3" height="4" rx="1"/><rect x="4.5" y="5" width="3" height="6" rx="1"/><rect x="9" y="2.5" width="3" height="8.5" rx="1"/><rect x="13.5" width="3" height="11" rx="1"/></svg><svg width="15" height="11" viewBox="0 0 15 11" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M1.5 4a9 9 0 0 1 12 0"/><path d="M4 6.8a5.5 5.5 0 0 1 7 0"/><circle cx="7.5" cy="9.5" r="1.2" fill="currentColor" stroke="none"/></svg><svg width="22" height="11" viewBox="0 0 22 11" fill="none" stroke="currentColor"><rect x=".8" y=".8" width="17.4" height="9.4" rx="2.5" stroke-width="1.1" opacity=".45"/><rect x="2.6" y="2.6" width="11" height="5.8" rx="1.4" fill="currentColor" stroke="none"/><rect x="19.6" y="3.4" width="1.8" height="4.2" rx="1" fill="currentColor" stroke="none" opacity=".45"/></svg></span></div>
+        <div class="nv"><span class="bk">‹</span>搜索</div>
+        <div class="scr">
+          <div class="now-row">
+            <div class="now-wrap"><svg class="a-icon" width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="7" cy="7" r="4.5"/><path d="M10.5 10.5 14 14"/></svg><span class="a-text a-ph">搜索菜名 / 食材 / 菜系</span></div>
+            <div class="now-btn">搜索</div>
+          </div>
+          <div class="hot"><div class="hot-t">热门搜索</div><div class="tags"><span class="tag">红烧排骨</span><span class="tag">可乐鸡翅</span><span class="tag">番茄炒蛋</span><span class="tag">麻婆豆腐</span><span class="tag">糖醋里脊</span></div></div>
+          <div class="item"><img src="../assets/test/hongshao-paigu.png"><div><div class="t">红烧排骨</div><div class="m"><span class="st2">★</span> 4.8 · 12 人评</div></div><span class="ch">›</span></div>
+          <div class="fade"></div>
+        </div>
+      </div>
+    </div>
+    <div class="shot"><div class="shot-label"><b>现状 · 可爱风</b><span>cute · 截图同款</span></div>
+      <div class="phone p-cute">
+        <div class="st"><span>2:15</span><span class="st-r"><svg width="16" height="11" viewBox="0 0 17 11" fill="currentColor"><rect y="7" width="3" height="4" rx="1"/><rect x="4.5" y="5" width="3" height="6" rx="1"/><rect x="9" y="2.5" width="3" height="8.5" rx="1"/><rect x="13.5" width="3" height="11" rx="1"/></svg><svg width="15" height="11" viewBox="0 0 15 11" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M1.5 4a9 9 0 0 1 12 0"/><path d="M4 6.8a5.5 5.5 0 0 1 7 0"/><circle cx="7.5" cy="9.5" r="1.2" fill="currentColor" stroke="none"/></svg><svg width="22" height="11" viewBox="0 0 22 11" fill="none" stroke="currentColor"><rect x=".8" y=".8" width="17.4" height="9.4" rx="2.5" stroke-width="1.1" opacity=".45"/><rect x="2.6" y="2.6" width="11" height="5.8" rx="1.4" fill="currentColor" stroke="none"/><rect x="19.6" y="3.4" width="1.8" height="4.2" rx="1" fill="currentColor" stroke="none" opacity=".45"/></svg></span></div>
+        <div class="nv"><span class="bk">‹</span>搜索</div>
+        <div class="scr">
+          <div class="now-row">
+            <div class="now-wrap"><svg class="a-icon" width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="7" cy="7" r="4.5"/><path d="M10.5 10.5 14 14"/></svg><span class="a-text a-ph">搜索菜名 / 食材 / 菜系</span></div>
+            <div class="now-btn">搜索</div>
+          </div>
+          <div class="hot"><div class="hot-t">热门搜索</div><div class="tags"><span class="tag">红烧排骨</span><span class="tag">可乐鸡翅</span><span class="tag">番茄炒蛋</span><span class="tag">麻婆豆腐</span><span class="tag">糖醋里脊</span></div></div>
+          <div class="item"><img src="../assets/test/hongshao-paigu.png"><div><div class="t">红烧排骨</div><div class="m"><span class="st2">★</span> 4.8 · 12 人评</div></div><span class="ch">›</span></div>
+          <div class="fade"></div>
+        </div>
+      </div>
+    </div>
+    <div class="shot"><div class="shot-label"><b>现状 · 简洁风</b><span>clean</span></div>
+      <div class="phone p-clean">
+        <div class="st"><span>2:15</span><span class="st-r"><svg width="16" height="11" viewBox="0 0 17 11" fill="currentColor"><rect y="7" width="3" height="4" rx="1"/><rect x="4.5" y="5" width="3" height="6" rx="1"/><rect x="9" y="2.5" width="3" height="8.5" rx="1"/><rect x="13.5" width="3" height="11" rx="1"/></svg><svg width="15" height="11" viewBox="0 0 15 11" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M1.5 4a9 9 0 0 1 12 0"/><path d="M4 6.8a5.5 5.5 0 0 1 7 0"/><circle cx="7.5" cy="9.5" r="1.2" fill="currentColor" stroke="none"/></svg><svg width="22" height="11" viewBox="0 0 22 11" fill="none" stroke="currentColor"><rect x=".8" y=".8" width="17.4" height="9.4" rx="2.5" stroke-width="1.1" opacity=".45"/><rect x="2.6" y="2.6" width="11" height="5.8" rx="1.4" fill="currentColor" stroke="none"/><rect x="19.6" y="3.4" width="1.8" height="4.2" rx="1" fill="currentColor" stroke="none" opacity=".45"/></svg></span></div>
+        <div class="nv"><span class="bk">‹</span>搜索</div>
+        <div class="scr">
+          <div class="now-row">
+            <div class="now-wrap"><svg class="a-icon" width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="7" cy="7" r="4.5"/><path d="M10.5 10.5 14 14"/></svg><span class="a-text a-ph">搜索菜名 / 食材 / 菜系</span></div>
+            <div class="now-btn">搜索</div>
+          </div>
+          <div class="hot"><div class="hot-t">热门搜索</div><div class="tags"><span class="tag">红烧排骨</span><span class="tag">可乐鸡翅</span><span class="tag">番茄炒蛋</span><span class="tag">麻婆豆腐</span><span class="tag">糖醋里脊</span></div></div>
+          <div class="item"><img src="../assets/test/hongshao-paigu.png"><div><div class="t">红烧排骨</div><div class="m"><span class="st2">★</span> 4.8 · 12 人评</div></div><span class="ch">›</span></div>
+          <div class="fade"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 方案A ===== -->
+<section class="sec">
+  <div class="sec-h"><b>方案 A · 内嵌圆钮</b><span class="tagchip">OPTION A</span><span class="why">输入框占满整行 · 60rpx 圆钮右置 · 键盘搜索键同触发</span></div>
+  <p><b>结构：</b>输入框升为整行主体，右端内嵌 <b>60rpx（30px）圆钮</b>承载放大镜；<code>bindconfirm</code> 已绑定键盘「搜索」键，双入口触发。<b>状态：</b>空输入时圆钮 45% 透明度弱化，输入后实色高亮（下方三屏展示输入态 + 空态对照）。可爱风下圆钮沿用粉渐变 + 勾边 + 硬投影，但体量缩小 60%，不再喧宾夺主。</p>
+  <div class="row">
+    <div class="shot"><div class="shot-label"><b>方案A · 经典</b><span>输入态 / 空态</span></div>
+      <div class="phone p-light">
+        <div class="st"><span>2:15</span><span class="st-r"><svg width="16" height="11" viewBox="0 0 17 11" fill="currentColor"><rect y="7" width="3" height="4" rx="1"/><rect x="4.5" y="5" width="3" height="6" rx="1"/><rect x="9" y="2.5" width="3" height="8.5" rx="1"/><rect x="13.5" width="3" height="11" rx="1"/></svg><svg width="15" height="11" viewBox="0 0 15 11" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M1.5 4a9 9 0 0 1 12 0"/><path d="M4 6.8a5.5 5.5 0 0 1 7 0"/><circle cx="7.5" cy="9.5" r="1.2" fill="currentColor" stroke="none"/></svg><svg width="22" height="11" viewBox="0 0 22 11" fill="none" stroke="currentColor"><rect x=".8" y=".8" width="17.4" height="9.4" rx="2.5" stroke-width="1.1" opacity=".45"/><rect x="2.6" y="2.6" width="11" height="5.8" rx="1.4" fill="currentColor" stroke="none"/><rect x="19.6" y="3.4" width="1.8" height="4.2" rx="1" fill="currentColor" stroke="none" opacity=".45"/></svg></span></div>
+        <div class="nv"><span class="bk">‹</span>搜索</div>
+        <div class="scr">
+          <div class="a-wrap">
+            <svg class="a-icon" width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="7" cy="7" r="4.5"/><path d="M10.5 10.5 14 14"/></svg>
+            <span class="a-text">红烧排骨</span>
+            <div class="a-go"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="7" cy="7" r="4.5"/><path d="M10.5 10.5 14 14"/></svg></div>
+          </div>
+          <div class="a-note"><i>⏎</i> 键盘「搜索」键同样触发</div>
+          <div class="hot"><div class="hot-t">热门搜索</div><div class="tags"><span class="tag">红烧排骨</span><span class="tag">可乐鸡翅</span><span class="tag">番茄炒蛋</span><span class="tag">麻婆豆腐</span><span class="tag">糖醋里脊</span></div></div>
+          <div class="a-wrap" style="margin-top:6px">
+            <svg class="a-icon" width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="7" cy="7" r="4.5"/><path d="M10.5 10.5 14 14"/></svg>
+            <span class="a-text a-ph">搜索菜名 / 食材 / 菜系</span>
+            <div class="a-go dim"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="7" cy="7" r="4.5"/><path d="M10.5 10.5 14 14"/></svg></div>
+          </div>
+          <div class="a-note" style="opacity:.6">空输入态：圆钮弱化 45%</div>
+          <div class="fade"></div>
+        </div>
+      </div>
+    </div>
+    <div class="shot"><div class="shot-label"><b>方案A · 可爱风</b><span>输入态 / 空态</span></div>
+      <div class="phone p-cute">
+        <div class="st"><span>2:15</span><span class="st-r"><svg width="16" height="11" viewBox="0 0 17 11" fill="currentColor"><rect y="7" width="3" height="4" rx="1"/><rect x="4.5" y="5" width="3" height="6" rx="1"/><rect x="9" y="2.5" width="3" height="8.5" rx="1"/><rect x="13.5" width="3" height="11" rx="1"/></svg><svg width="15" height="11" viewBox="0 0 15 11" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M1.5 4a9 9 0 0 1 12 0"/><path d="M4 6.8a5.5 5.5 0 0 1 7 0"/><circle cx="7.5" cy="9.5" r="1.2" fill="currentColor" stroke="none"/></svg><svg width="22" height="11" viewBox="0 0 22 11" fill="none" stroke="currentColor"><rect x=".8" y=".8" width="17.4" height="9.4" rx="2.5" stroke-width="1.1" opacity=".45"/><rect x="2.6" y="2.6" width="11" height="5.8" rx="1.4" fill="currentColor" stroke="none"/><rect x="19.6" y="3.4" width="1.8" height="4.2" rx="1" fill="currentColor" stroke="none" opacity=".45"/></svg></span></div>
+        <div class="nv"><span class="bk">‹</span>搜索</div>
+        <div class="scr">
+          <div class="a-wrap">
+            <svg class="a-icon" width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="7" cy="7" r="4.5"/><path d="M10.5 10.5 14 14"/></svg>
+            <span class="a-text">红烧排骨</span>
+            <div class="a-go"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="7" cy="7" r="4.5"/><path d="M10.5 10.5 14 14"/></svg></div>
+          </div>
+          <div class="a-note"><i>⏎</i> 键盘「搜索」键同样触发</div>
+          <div class="hot"><div class="hot-t">热门搜索</div><div class="tags"><span class="tag">红烧排骨</span><span class="tag">可乐鸡翅</span><span class="tag">番茄炒蛋</span><span class="tag">麻婆豆腐</span><span class="tag">糖醋里脊</span></div></div>
+          <div class="a-wrap" style="margin-top:6px">
+            <svg class="a-icon" width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="7" cy="7" r="4.5"/><path d="M10.5 10.5 14 14"/></svg>
+            <span class="a-text a-ph">搜索菜名 / 食材 / 菜系</span>
+            <div class="a-go dim"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="7" cy="7" r="4.5"/><path d="M10.5 10.5 14 14"/></svg></div>
+          </div>
+          <div class="a-note" style="opacity:.6">空输入态：圆钮弱化 45%</div>
+          <div class="fade"></div>
+        </div>
+      </div>
+    </div>
+    <div class="shot"><div class="shot-label"><b>方案A · 简洁风</b><span>输入态 / 空态</span></div>
+      <div class="phone p-clean">
+        <div class="st"><span>2:15</span><span class="st-r"><svg width="16" height="11" viewBox="0 0 17 11" fill="currentColor"><rect y="7" width="3" height="4" rx="1"/><rect x="4.5" y="5" width="3" height="6" rx="1"/><rect x="9" y="2.5" width="3" height="8.5" rx="1"/><rect x="13.5" width="3" height="11" rx="1"/></svg><svg width="15" height="11" viewBox="0 0 15 11" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M1.5 4a9 9 0 0 1 12 0"/><path d="M4 6.8a5.5 5.5 0 0 1 7 0"/><circle cx="7.5" cy="9.5" r="1.2" fill="currentColor" stroke="none"/></svg><svg width="22" height="11" viewBox="0 0 22 11" fill="none" stroke="currentColor"><rect x=".8" y=".8" width="17.4" height="9.4" rx="2.5" stroke-width="1.1" opacity=".45"/><rect x="2.6" y="2.6" width="11" height="5.8" rx="1.4" fill="currentColor" stroke="none"/><rect x="19.6" y="3.4" width="1.8" height="4.2" rx="1" fill="currentColor" stroke="none" opacity=".45"/></svg></span></div>
+        <div class="nv"><span class="bk">‹</span>搜索</div>
+        <div class="scr">
+          <div class="a-wrap">
+            <svg class="a-icon" width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="7" cy="7" r="4.5"/><path d="M10.5 10.5 14 14"/></svg>
+            <span class="a-text">红烧排骨</span>
+            <div class="a-go"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="7" cy="7" r="4.5"/><path d="M10.5 10.5 14 14"/></svg></div>
+          </div>
+          <div class="a-note"><i>⏎</i> 键盘「搜索」键同样触发</div>
+          <div class="hot"><div class="hot-t">热门搜索</div><div class="tags"><span class="tag">红烧排骨</span><span class="tag">可乐鸡翅</span><span class="tag">番茄炒蛋</span><span class="tag">麻婆豆腐</span><span class="tag">糖醋里脊</span></div></div>
+          <div class="a-wrap" style="margin-top:6px">
+            <svg class="a-icon" width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="7" cy="7" r="4.5"/><path d="M10.5 10.5 14 14"/></svg>
+            <span class="a-text a-ph">搜索菜名 / 食材 / 菜系</span>
+            <div class="a-go dim"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="7" cy="7" r="4.5"/><path d="M10.5 10.5 14 14"/></svg></div>
+          </div>
+          <div class="a-note" style="opacity:.6">空输入态：圆钮弱化 45%</div>
+          <div class="fade"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 方案B ===== -->
+<section class="sec">
+  <div class="sec-h"><b>方案 B · 按钮放下面</b><span class="tagchip">OPTION B</span><span class="why">输入框占满整行 · 整宽主按钮置底</span></div>
+  <p><b>结构：</b>输入框整行，正下方是 <b>整宽 84rpx 主按钮</b>，间距 16rpx。<b>特点：</b>CTA 触达面积最大、无学习成本；但头部占用从 1 行变 2 行，热门搜索与结果整体下移约 100rpx。简洁风下黑底整宽按钮形成强对比的「提交」感；可爱风下粉渐变整宽 + 勾边硬投影，存在感回到与现状相当的水平。</p>
+  <div class="row">
+    <div class="shot"><div class="shot-label"><b>方案B · 经典</b><span>light</span></div>
+      <div class="phone p-light">
+        <div class="st"><span>2:15</span><span class="st-r"><svg width="16" height="11" viewBox="0 0 17 11" fill="currentColor"><rect y="7" width="3" height="4" rx="1"/><rect x="4.5" y="5" width="3" height="6" rx="1"/><rect x="9" y="2.5" width="3" height="8.5" rx="1"/><rect x="13.5" width="3" height="11" rx="1"/></svg><svg width="15" height="11" viewBox="0 0 15 11" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M1.5 4a9 9 0 0 1 12 0"/><path d="M4 6.8a5.5 5.5 0 0 1 7 0"/><circle cx="7.5" cy="9.5" r="1.2" fill="currentColor" stroke="none"/></svg><svg width="22" height="11" viewBox="0 0 22 11" fill="none" stroke="currentColor"><rect x=".8" y=".8" width="17.4" height="9.4" rx="2.5" stroke-width="1.1" opacity=".45"/><rect x="2.6" y="2.6" width="11" height="5.8" rx="1.4" fill="currentColor" stroke="none"/><rect x="19.6" y="3.4" width="1.8" height="4.2" rx="1" fill="currentColor" stroke="none" opacity=".45"/></svg></span></div>
+        <div class="nv"><span class="bk">‹</span>搜索</div>
+        <div class="scr">
+          <div class="b-wrap"><svg class="a-icon" width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="7" cy="7" r="4.5"/><path d="M10.5 10.5 14 14"/></svg><span class="a-text a-ph">搜索菜名 / 食材 / 菜系</span></div>
+          <div class="b-btn">搜 索</div>
+          <div class="hot"><div class="hot-t">热门搜索</div><div class="tags"><span class="tag">红烧排骨</span><span class="tag">可乐鸡翅</span><span class="tag">番茄炒蛋</span><span class="tag">麻婆豆腐</span><span class="tag">糖醋里脊</span></div></div>
+          <div class="item"><img src="../assets/test/fanqie-chaodan.png"><div><div class="t">番茄炒蛋</div><div class="m"><span class="st2">★</span> 4.7 · 9 人评</div></div><span class="ch">›</span></div>
+          <div class="fade"></div>
+        </div>
+      </div>
+    </div>
+    <div class="shot"><div class="shot-label"><b>方案B · 可爱风</b><span>cute</span></div>
+      <div class="phone p-cute">
+        <div class="st"><span>2:15</span><span class="st-r"><svg width="16" height="11" viewBox="0 0 17 11" fill="currentColor"><rect y="7" width="3" height="4" rx="1"/><rect x="4.5" y="5" width="3" height="6" rx="1"/><rect x="9" y="2.5" width="3" height="8.5" rx="1"/><rect x="13.5" width="3" height="11" rx="1"/></svg><svg width="15" height="11" viewBox="0 0 15 11" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M1.5 4a9 9 0 0 1 12 0"/><path d="M4 6.8a5.5 5.5 0 0 1 7 0"/><circle cx="7.5" cy="9.5" r="1.2" fill="currentColor" stroke="none"/></svg><svg width="22" height="11" viewBox="0 0 22 11" fill="none" stroke="currentColor"><rect x=".8" y=".8" width="17.4" height="9.4" rx="2.5" stroke-width="1.1" opacity=".45"/><rect x="2.6" y="2.6" width="11" height="5.8" rx="1.4" fill="currentColor" stroke="none"/><rect x="19.6" y="3.4" width="1.8" height="4.2" rx="1" fill="currentColor" stroke="none" opacity=".45"/></svg></span></div>
+        <div class="nv"><span class="bk">‹</span>搜索</div>
+        <div class="scr">
+          <div class="b-wrap"><svg class="a-icon" width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="7" cy="7" r="4.5"/><path d="M10.5 10.5 14 14"/></svg><span class="a-text a-ph">搜索菜名 / 食材 / 菜系</span></div>
+          <div class="b-btn">搜 索</div>
+          <div class="hot"><div class="hot-t">热门搜索</div><div class="tags"><span class="tag">红烧排骨</span><span class="tag">可乐鸡翅</span><span class="tag">番茄炒蛋</span><span class="tag">麻婆豆腐</span><span class="tag">糖醋里脊</span></div></div>
+          <div class="item"><img src="../assets/test/fanqie-chaodan.png"><div><div class="t">番茄炒蛋</div><div class="m"><span class="st2">★</span> 4.7 · 9 人评</div></div><span class="ch">›</span></div>
+          <div class="fade"></div>
+        </div>
+      </div>
+    </div>
+    <div class="shot"><div class="shot-label"><b>方案B · 简洁风</b><span>clean</span></div>
+      <div class="phone p-clean">
+        <div class="st"><span>2:15</span><span class="st-r"><svg width="16" height="11" viewBox="0 0 17 11" fill="currentColor"><rect y="7" width="3" height="4" rx="1"/><rect x="4.5" y="5" width="3" height="6" rx="1"/><rect x="9" y="2.5" width="3" height="8.5" rx="1"/><rect x="13.5" width="3" height="11" rx="1"/></svg><svg width="15" height="11" viewBox="0 0 15 11" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M1.5 4a9 9 0 0 1 12 0"/><path d="M4 6.8a5.5 5.5 0 0 1 7 0"/><circle cx="7.5" cy="9.5" r="1.2" fill="currentColor" stroke="none"/></svg><svg width="22" height="11" viewBox="0 0 22 11" fill="none" stroke="currentColor"><rect x=".8" y=".8" width="17.4" height="9.4" rx="2.5" stroke-width="1.1" opacity=".45"/><rect x="2.6" y="2.6" width="11" height="5.8" rx="1.4" fill="currentColor" stroke="none"/><rect x="19.6" y="3.4" width="1.8" height="4.2" rx="1" fill="currentColor" stroke="none" opacity=".45"/></svg></span></div>
+        <div class="nv"><span class="bk">‹</span>搜索</div>
+        <div class="scr">
+          <div class="b-wrap"><svg class="a-icon" width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="7" cy="7" r="4.5"/><path d="M10.5 10.5 14 14"/></svg><span class="a-text a-ph">搜索菜名 / 食材 / 菜系</span></div>
+          <div class="b-btn">搜 索</div>
+          <div class="hot"><div class="hot-t">热门搜索</div><div class="tags"><span class="tag">红烧排骨</span><span class="tag">可乐鸡翅</span><span class="tag">番茄炒蛋</span><span class="tag">麻婆豆腐</span><span class="tag">糖醋里脊</span></div></div>
+          <div class="item"><img src="../assets/test/fanqie-chaodan.png"><div><div class="t">番茄炒蛋</div><div class="m"><span class="st2">★</span> 4.7 · 9 人评</div></div><span class="ch">›</span></div>
+          <div class="fade"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+</body>
+</html>

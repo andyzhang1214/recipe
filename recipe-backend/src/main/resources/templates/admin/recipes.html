@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{admin/layout :: base('recipes', ~{::main})}">
+<body>
+<main>
+  <div class="page-title">菜谱管理</div>
+  <form class="toolbar" method="get" th:action="@{/admin/recipes}">
+    <input type="text" name="keyword" th:value="${keyword}" placeholder="按标题搜索…">
+    <button class="btn plain" type="submit">搜索</button>
+    <div class="spacer"></div>
+  </form>
+  <div class="card">
+    <table>
+      <thead>
+      <tr>
+        <th>ID</th><th>封面</th><th>标题</th><th>作者</th><th>可见性</th><th>状态</th><th>评分</th><th>发布时间</th><th>操作</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr th:each="row : ${rows}">
+        <td th:text="${row.recipe.id}">1</td>
+        <td><img class="cover-thumb" th:if="${row.recipe.cover}" th:src="${row.recipe.cover}"></td>
+        <td th:text="${row.recipe.title}">红烧排骨</td>
+        <td th:text="${row.author}">Andy</td>
+        <td>
+          <span class="tag" th:classappend="${row.recipe.visibility == 'PUBLIC'} ? 'tag-green' : (${row.recipe.visibility == 'PRIVATE'} ? 'tag-gray' : 'tag-blue')"
+                th:text="${row.recipe.visibility}">PUBLIC</span>
+        </td>
+        <td>
+          <span class="tag" th:classappend="${row.recipe.status == 'PUBLISHED'} ? 'tag-green' : 'tag-orange'"
+                th:text="${row.recipe.status == 'PUBLISHED'} ? '已上架' : '已下架'">已上架</span>
+        </td>
+        <td th:text="'★ ' + ${row.recipe.avgStars} + ' (' + ${row.recipe.ratingCount} + ')'">★ 4.5</td>
+        <td class="muted" th:text="${row.recipe.createdAt != null} ? ${#temporals.format(row.recipe.createdAt, 'MM-dd HH:mm')} : '—'">08-18 10:00</td>
+        <td>
+          <button class="btn ok sm" th:if="${row.recipe.status == 'DRAFT'}"
+                  th:attr="data-id=${row.recipe.id},data-status='PUBLISHED'" onclick="setStatus(this)">上架</button>
+          <button class="btn warn sm" th:if="${row.recipe.status == 'PUBLISHED'}"
+                  th:attr="data-id=${row.recipe.id},data-status='DRAFT'" onclick="setStatus(this)">下架</button>
+          <button class="btn danger sm" th:attr="data-id=${row.recipe.id}" onclick="del('/admin/api/recipes/' + this.dataset.id)">删除</button>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+    <div class="empty-tip" th:if="${#lists.isEmpty(rows)}">暂无菜谱</div>
+    <div class="pager">
+      <a th:if="${page.current > 1}" th:href="@{/admin/recipes(page=${page.current - 1}, keyword=${keyword})}">上一页</a>
+      <span class="cur" th:text="${page.current}">1</span>
+      <a th:if="${page.current < page.pages}" th:href="@{/admin/recipes(page=${page.current + 1}, keyword=${keyword})}">下一页</a>
+      <span th:text="'共 ' + ${page.total} + ' 条'">共 0 条</span>
+    </div>
+  </div>
+</main>
+<script>
+  function setStatus(btn) {
+    fetch('/admin/api/recipes/' + btn.dataset.id + '/status', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ status: btn.dataset.status })
+    }).then(r => r.json()).then(res => {
+      if (res.code === 0) location.reload();
+      else alert(res.message || '操作失败');
+    });
+  }
+  function del(url) {
+    if (!confirm('确认删除？此操作不可恢复')) return;
+    fetch(url, { method: 'DELETE' }).then(r => r.json()).then(res => {
+      if (res.code === 0) location.reload();
+      else alert(res.message || '操作失败');
+    });
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,22 @@
+# Maven 构建产物与 IDE/本地文件
+target/
+**/target/
+.idea/
+*.iml
+.mvn/
+
+# 版本控制与本地环境
+.git/
+.gitignore
+.gitattributes
+
+# 日志与临时文件
+*.log
+logs/
+tmp/
+*.pid
+.DS_Store
+
+# 测试/本地脚本（不需要打进生产镜像）
+test-api.py
+*.md

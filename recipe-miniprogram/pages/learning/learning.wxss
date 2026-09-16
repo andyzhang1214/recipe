@@ -1,0 +1,127 @@
+/* 待学习菜谱 */
+.page-content { padding-bottom: 60rpx; }
+
+/* 顶部统计卡 */
+.learn-hero {
+  display: flex;
+  align-items: center;
+  gap: 24rpx;
+  background: var(--card);
+}
+.hero-icon {
+  width: 96rpx;
+  height: 96rpx;
+  border-radius: var(--radius-card);
+  background: var(--accent-grad-soft);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 46rpx;
+  flex-shrink: 0;
+}
+.hero-main { flex: 1; min-width: 0; }
+.hero-title { font-size: 34rpx; font-weight: 700; color: var(--text); letter-spacing: 1rpx; }
+.hero-sub { font-size: 24rpx; color: var(--sub); margin-top: 10rpx; }
+
+/* 学习列表 */
+.lr-item {
+  display: flex;
+  align-items: center;
+  gap: 22rpx;
+  padding: 26rpx 0;
+  border-bottom: 1rpx solid var(--border);
+  max-width: 100%;
+  overflow: hidden;
+}
+.lr-item:last-of-type { border-bottom: none; }
+.lr-no {
+  width: 64rpx;
+  height: 64rpx;
+  border-radius: var(--radius-md);
+  background: var(--accent-grad);
+  color: var(--btn-text);
+  font-size: 26rpx;
+  font-weight: 700;
+  font-family: 'JetBrains Mono', monospace;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 6rpx 16rpx var(--glow);
+}
+.lr-info { flex: 1; min-width: 0; }
+.lr-dish {
+  font-size: 30rpx;
+  font-weight: 700;
+  color: var(--text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.lr-meta {
+  font-size: 22rpx;
+  color: var(--sub);
+  margin-top: 10rpx;
+  display: flex;
+  align-items: center;
+  gap: 14rpx;
+  flex-wrap: wrap;
+}
+.lr-from {
+  background: var(--accent-grad-soft);
+  color: var(--accent);
+  border-radius: var(--radius-tag);
+  padding: 4rpx 16rpx;
+}
+.lr-date { opacity: 0.8; }
+/* 操作区：右侧上下两枚小按钮（view 实现，绕开原生 button 文字渲染坑） */
+.lr-ops {
+  display: flex;
+  flex-direction: column;
+  gap: 12rpx;
+  width: 150rpx;
+  flex-shrink: 0;
+}
+.lr-btn {
+  width: 100%;
+  height: 60rpx;
+  border-radius: var(--radius-btn);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24rpx;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  box-sizing: border-box;
+  transition: transform 0.15s ease, opacity 0.15s ease;
+}
+.lr-press { transform: scale(0.92); opacity: 0.8; }
+.lr-btn.go {
+  background: var(--accent-grad);
+  color: var(--btn-text);
+  box-shadow: 0 4rpx 14rpx var(--glow);
+  border: var(--btn-primary-border);
+}
+.lr-btn.del {
+  background: var(--fill);
+  color: var(--sub);
+  border: 2rpx solid var(--border);
+}
+
+.lr-tip {
+  font-size: 22rpx;
+  color: var(--sub);
+  text-align: center;
+  padding-top: 24rpx;
+  opacity: 0.85;
+}
+
+/* 空态 */
+.empty-sub {
+  font-size: 24rpx;
+  color: var(--sub);
+  margin-top: 14rpx;
+  line-height: 1.7;
+  padding: 0 40rpx;
+}

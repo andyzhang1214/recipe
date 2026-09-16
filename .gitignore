@@ -1,0 +1,25 @@
+# 系统
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+*.iml
+.vscode/
+
+# Java / Maven
+target/
+*.class
+*.jar
+
+# Node
+node_modules/
+miniprogram_npm/
+
+# 本地配置与密钥（严禁提交）
+.env
+.env.*
+*.pem
+*.key
+*.p12
+application-local.yml

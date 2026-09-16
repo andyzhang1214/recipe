@@ -1,0 +1,101 @@
+<view class="page theme-{{theme}} bg-{{skinBg}}" style="{{bgStyle}}">
+  <nav-bar title="烹饪倒计时" back="{{true}}" theme="{{theme}}" />
+  <view class="page-content">
+    <view class="page-header header-only-sub">
+      <view class="h-sub">炖一锅好汤，从守住时间开始</view>
+    </view>
+
+    <view class="card timer {{item.running ? 'running' : ''}}" wx:for="{{timers}}" wx:key="id">
+      <view class="t-info">
+        <view class="t-name">{{item.name}}</view>
+        <view class="t-time {{item.running ? 'running' : ''}}">{{item.remainText}}</view>
+      </view>
+      <view class="t-ops">
+        <text class="op" wx:if="{{!item.running && !item.endAt}}" data-id="{{item.id}}" bindtap="start">开始</text>
+        <text class="op pause" wx:if="{{item.running}}" data-id="{{item.id}}" bindtap="pause">暂停</text>
+        <text class="op" wx:if="{{item.endAt || item.pausedRemainSec}}" data-id="{{item.id}}" bindtap="reset">重置</text>
+        <text class="op del" data-id="{{item.id}}" bindtap="remove">删除</text>
+      </view>
+    </view>
+
+    <view class="empty" wx:if="{{timers.length === 0}}">
+      <text class="empty-icon">⏲</text>
+      还没有计时器，选择预设或手动添加
+    </view>
+
+    <!-- 添加计时器：名称 + 时/分/秒三段 + 底部整宽按钮 -->
+    <view class="card">
+      <view class="card-title">添加计时器</view>
+      <view class="add-form">
+        <input class="input a-name" placeholder="名称（鸡汤/排骨）" placeholder-class="ph-txt" bindinput="onAddName" value="{{addName}}" />
+        <view class="dur-row">
+          <view class="dur-cell">
+            <input class="input a-num" type="number" placeholder="0" placeholder-class="ph-num" bindinput="onAddH" value="{{addH}}" />
+            <view class="dur-cap">时</view>
+          </view>
+          <view class="dur-colon">:</view>
+          <view class="dur-cell">
+            <input class="input a-num" type="number" placeholder="0" placeholder-class="ph-num" bindinput="onAddM" value="{{addM}}" />
+            <view class="dur-cap">分</view>
+          </view>
+          <view class="dur-colon">:</view>
+          <view class="dur-cell">
+            <input class="input a-num" type="number" placeholder="0" placeholder-class="ph-num" bindinput="onAddS" value="{{addS}}" />
+            <view class="dur-cap">秒</view>
+          </view>
+        </view>
+        <button class="btn btn-primary a-btn" bindtap="confirmAdd">添加计时器</button>
+        <view class="save-preset-row {{savePreset ? 'on' : ''}}" bindtap="toggleSavePreset" hover-class="spr-hover">
+          <view class="sp-box"><text wx:if="{{savePreset}}" class="sp-check">✓</text></view>
+          <text class="sp-label">保存为常用预设</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 常用预设：用户自己添加，点卡片直接开计时，可编辑 / 删除 -->
+    <view class="card">
+      <view class="card-title">常用预设</view>
+      <view class="presets" wx:if="{{presets.length > 0}}">
+        <view class="preset" wx:for="{{presets}}" wx:key="id" hover-class="preset-press"
+              data-idx="{{index}}" bindtap="addPreset">
+          <view class="p-main">
+            <view class="p-name">{{item.name}}</view>
+            <view class="p-min">{{item.h ? item.h + '时' : ''}}{{item.m ? item.m + '分' : ''}}{{item.s ? item.s + '秒' : ''}}</view>
+          </view>
+          <view class="p-ops" catchtap="noop">
+            <text class="p-op" data-idx="{{index}}" catchtap="editPreset">改</text>
+            <text class="p-op del" data-idx="{{index}}" catchtap="removePreset">删</text>
+          </view>
+        </view>
+      </view>
+      <view class="empty small" wx:if="{{presets.length === 0}}">
+        <text class="empty-icon">🔖</text>
+        还没有常用预设，添加计时器时勾选「保存为常用预设」
+      </view>
+    </view>
+  </view>
+
+  <!-- 编辑预设弹层 -->
+  <view class="mask" wx:if="{{showPresetForm}}" bindtap="closePresetForm" />
+  <view class="sheet" wx:if="{{showPresetForm}}">
+    <view class="sheet-title">{{editingIdx > -1 ? '编辑预设' : '保存预设'}}</view>
+    <input class="input pf-name" placeholder="预设名称" placeholder-class="ph-txt" bindinput="onPresetName" value="{{pfName}}" />
+    <view class="dur-row pf-dur">
+      <view class="dur-cell">
+        <input class="input a-num" type="number" placeholder="0" placeholder-class="ph-num" bindinput="onPresetH" value="{{pfH}}" />
+        <view class="dur-cap">时</view>
+      </view>
+      <view class="dur-colon">:</view>
+      <view class="dur-cell">
+        <input class="input a-num" type="number" placeholder="0" placeholder-class="ph-num" bindinput="onPresetM" value="{{pfM}}" />
+        <view class="dur-cap">分</view>
+      </view>
+      <view class="dur-colon">:</view>
+      <view class="dur-cell">
+        <input class="input a-num" type="number" placeholder="0" placeholder-class="ph-num" bindinput="onPresetS" value="{{pfS}}" />
+        <view class="dur-cap">秒</view>
+      </view>
+    </view>
+    <button class="btn btn-primary sheet-btn" bindtap="confirmPresetForm">保存</button>
+  </view>
+</view>

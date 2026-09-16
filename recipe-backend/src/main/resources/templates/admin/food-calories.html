@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{admin/layout :: base('food-calories', ~{::main})}">
+<body>
+<main>
+  <style>
+    .alias-cell { display: flex; align-items: center; gap: 8px; }
+    .alias-cell > span { max-width: 260px; }
+    .alias-row { display: flex; align-items: center; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid #f0f0f0; }
+    .alias-row:last-child { border-bottom: none; }
+  </style>
+  <div class="page-title">热量库管理</div>
+  <div class="toolbar">
+    <form method="get" th:action="@{/admin/food-calories}" style="display:flex;gap:10px">
+      <input type="text" name="keyword" th:value="${keyword}" placeholder="按名称搜索…">
+      <button class="btn plain" type="submit">搜索</button>
+    </form>
+    <div class="spacer"></div>
+    <button class="btn primary" onclick="openModal()">＋ 新增</button>
+  </div>
+  <div class="card">
+    <table>
+      <thead>
+      <tr><th>ID</th><th>名称</th><th>别名（同义叫法）</th><th>分类</th><th>热量/100g</th><th>单位</th><th>备注</th><th>操作</th></tr>
+      </thead>
+      <tbody>
+      <tr th:each="c : ${page.records}">
+        <td th:text="${c.id}">1</td>
+        <td th:text="${c.name}">鸡蛋</td>
+        <td>
+          <div class="alias-cell">
+            <span class="muted" th:if="${aliasMap.get(c.id) == null}">-</span>
+            <span th:if="${aliasMap.get(c.id) != null}" th:text="${aliasMap.get(c.id)}">西红柿</span>
+            <button class="btn plain sm" th:attr="data-id=${c.id}" onclick="manageAlias(this)">别名</button>
+          </div>
+        </td>
+        <td><span class="tag" th:classappend="${c.category == '食品'} ? 'tag-green' : 'tag-orange'"
+                  th:text="${c.category}">食品</span></td>
+        <td th:text="${c.caloriesPer100}">144</td>
+        <td class="muted" th:text="${c.unit}">g</td>
+        <td class="muted" th:text="${c.remark}">-</td>
+        <td>
+          <button class="btn plain sm" th:attr="data-id=${c.id}" onclick="edit(this)">编辑</button>
+          <button class="btn danger sm" th:attr="data-id=${c.id}" onclick="del(this)">删除</button>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+    <div class="empty-tip" th:if="${#lists.isEmpty(page.records)}">暂无数据</div>
+    <div class="pager">
+      <a th:if="${page.current > 1}" th:href="@{/admin/food-calories(page=${page.current - 1}, keyword=${keyword})}">上一页</a>
+      <span class="cur" th:text="${page.current}">1</span>
+      <a th:if="${page.current < page.pages}" th:href="@{/admin/food-calories(page=${page.current + 1}, keyword=${keyword})}">下一页</a>
+      <span th:text="'共 ' + ${page.total} + ' 条'">共 0 条</span>
+    </div>
+  </div>
+
+  <!-- 别名管理弹层 -->
+  <div class="modal-mask" id="aliasModal">
+    <div class="modal">
+      <div class="m-head" id="aliasTitle">管理别名</div>
+      <div style="display:flex;gap:10px;margin-bottom:12px">
+        <input id="alias_input" placeholder="输入别名，如：西红柿" style="flex:1">
+        <button class="btn primary" onclick="addAlias()">添加</button>
+      </div>
+      <div id="alias_list" style="max-height:300px;overflow:auto"></div>
+      <div class="m-foot">
+        <button class="btn plain" onclick="closeAliasModal()">关闭</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 新增/编辑弹层 -->
+  <div class="modal-mask" id="modal">
+    <div class="modal">
+      <div class="m-head" id="mTitle">新增食品/调料</div>
+      <div class="form-grid">
+        <div><label>名称 *</label><input id="f_name" placeholder="如：鸡蛋"></div>
+        <div><label>分类 *</label>
+          <select id="f_category">
+            <option value="食品">食品</option>
+            <option value="调料">调料</option>
+          </select>
+        </div>
+        <div><label>热量（千卡/100g）*</label><input id="f_cal" type="number" placeholder="144"></div>
+        <div><label>单位（可空）</label><input id="f_unit" placeholder="g / 个 / 勺"></div>
+        <div class="full"><label>备注（可空）</label><input id="f_remark" placeholder="如：煮鸡蛋约 144 千卡"></div>
+      </div>
+      <div class="m-foot">
+        <button class="btn plain" onclick="closeModal()">取消</button>
+        <button class="btn primary" onclick="save()">保存</button>
+      </div>
+    </div>
+  </div>
+</main>
+<script>
+  let editingId = null;
+  function openModal() {
+    editingId = null;
+    document.getElementById('mTitle').textContent = '新增食品/调料';
+    ['f_name', 'f_cal', 'f_unit', 'f_remark'].forEach(id => document.getElementById(id).value = '');
+    document.getElementById('f_category').value = '食品';
+    document.getElementById('modal').classList.add('show');
+  }
+  function edit(btn) {
+    const row = btn.closest('tr');
+    editingId = btn.dataset.id;
+    document.getElementById('mTitle').textContent = '编辑 #' + editingId;
+    // 列序：ID(0) 名称(1) 别名(2) 分类(3) 热量(4) 单位(5) 备注(6)——加别名列后索引整体后移一位
+    const tds = row.querySelectorAll('td');
+    document.getElementById('f_name').value = tds[1].textContent.trim();
+    document.getElementById('f_category').value = tds[3].textContent.trim();
+    document.getElementById('f_cal').value = tds[4].textContent.trim();
+    document.getElementById('f_unit').value = tds[5].textContent.trim() === '-' ? '' : tds[5].textContent.trim();
+    document.getElementById('f_remark').value = tds[6].textContent.trim() === '-' ? '' : tds[6].textContent.trim();
+    document.getElementById('modal').classList.add('show');
+  }
+  function closeModal() { document.getElementById('modal').classList.remove('show'); }
+  function save() {
+    const name = document.getElementById('f_name').value.trim();
+    const cal = document.getElementById('f_cal').value;
+    if (!name || !cal) return alert('名称和热量必填');
+    const data = {
+      name, category: document.getElementById('f_category').value,
+      caloriesPer100: Number(cal),
+      unit: document.getElementById('f_unit').value.trim() || null,
+      remark: document.getElementById('f_remark').value.trim() || null
+    };
+    const url = editingId ? '/admin/api/food-calories/' + editingId : '/admin/api/food-calories';
+    fetch(url, {
+      method: editingId ? 'PUT' : 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    }).then(r => r.json()).then(res => {
+      if (res.code === 0) location.reload();
+      else alert(res.message || '保存失败');
+    });
+  }
+  function del(btn) {
+    if (!confirm('确认删除？')) return;
+    fetch('/admin/api/food-calories/' + btn.dataset.id, { method: 'DELETE' })
+      .then(r => r.json()).then(res => {
+        if (res.code === 0) location.reload();
+        else alert(res.message || '操作失败');
+      });
+  }
+
+  // ---------- 别名管理 ----------
+  let aliasFoodId = null;
+  function manageAlias(btn) {
+    aliasFoodId = btn.dataset.id;
+    const name = btn.closest('tr').querySelector('td:nth-child(2)').textContent.trim();
+    document.getElementById('aliasTitle').textContent = '管理别名 - ' + name;
+    document.getElementById('alias_input').value = '';
+    document.getElementById('aliasModal').classList.add('show');
+    loadAliases();
+  }
+  function closeAliasModal() { document.getElementById('aliasModal').classList.remove('show'); }
+  function loadAliases() {
+    fetch('/admin/api/food-calories/' + aliasFoodId + '/aliases')
+      .then(r => r.json()).then(res => {
+        const list = res.data || [];
+        const box = document.getElementById('alias_list');
+        // DOM 构建（textContent）：别名含 < > 等字符时不被解析为 HTML
+        box.replaceChildren();
+        if (!list.length) {
+          const empty = document.createElement('div');
+          empty.className = 'muted';
+          empty.style.padding = '8px 0';
+          empty.textContent = '暂无别名';
+          box.appendChild(empty);
+          return;
+        }
+        list.forEach(a => {
+          const row = document.createElement('div');
+          row.className = 'alias-row';
+          const span = document.createElement('span');
+          span.textContent = a.alias;
+          const btn = document.createElement('button');
+          btn.className = 'btn danger sm';
+          btn.textContent = '删除';
+          btn.onclick = () => delAlias(a.id);
+          row.append(span, btn);
+          box.appendChild(row);
+        });
+      });
+  }
+  function addAlias() {
+    const input = document.getElementById('alias_input');
+    const alias = input.value.trim();
+    if (!alias) return alert('请输入别名');
+    fetch('/admin/api/food-calories/' + aliasFoodId + '/aliases', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ alias })
+    }).then(r => r.json()).then(res => {
+      if (res.code === 0) { input.value = ''; loadAliases(); }
+      else alert(res.message || '添加失败');
+    });
+  }
+  function delAlias(id) {
+    if (!confirm('确认删除该别名？')) return;
+    fetch('/admin/api/food-aliases/' + id, { method: 'DELETE' })
+      .then(r => r.json()).then(res => {
+        if (res.code === 0) loadAliases();
+        else alert(res.message || '删除失败');
+      });
+  }
+</script>
+</body>
+</html>

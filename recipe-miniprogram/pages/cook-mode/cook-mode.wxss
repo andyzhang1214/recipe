@@ -1,0 +1,74 @@
+/* 照着做 */
+.page { padding: 40rpx 32rpx; }
+.progress-wrap { margin-bottom: 32rpx; }
+.progress-text { text-align: center; color: var(--sub); font-size: 27rpx; margin-bottom: 16rpx; font-weight: 500; }
+.progress-track {
+  height: 12rpx;
+  border-radius: 999rpx;
+  background: var(--fill);
+  overflow: hidden;
+}
+.progress-bar {
+  height: 100%;
+  border-radius: 999rpx;
+  background: var(--accent-grad);
+  transition: width 0.3s ease;
+}
+.step-card {
+  background: var(--card);
+  border-radius: var(--radius-card);
+  padding: 56rpx 44rpx;
+  min-height: 520rpx;
+  box-shadow: var(--shadow-lg);
+  border: var(--card-outline);
+  position: relative;
+  overflow: hidden;
+}
+.step-card::before {
+  content: '';
+  position: absolute;
+  top: -80rpx;
+  right: -80rpx;
+  width: 280rpx;
+  height: 280rpx;
+  border-radius: 50%;
+  background: var(--accent-grad-soft);
+}
+.step-no {
+  width: 76rpx;
+  height: 76rpx;
+  border-radius: 50%;
+  background: var(--accent-grad);
+  color: var(--btn-text);
+  font-size: 34rpx;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 10rpx 26rpx var(--glow);
+  position: relative;
+  z-index: 1;
+}
+.step-text {
+  font-size: 37rpx;
+  line-height: 1.85;
+  color: var(--text);
+  margin-top: 36rpx;
+  position: relative;
+  z-index: 1;
+  letter-spacing: 1rpx;
+}
+.step-img { width: 100%; border-radius: var(--radius-card); margin-top: 32rpx; position: relative; z-index: 1; }
+.nav { display: flex; gap: 20rpx; margin-top: 44rpx; }
+.nav .btn { flex: 1; }
+/* 独立计时器入口（步骤内联计时外的补充） */
+.timer-link {
+  margin-top: 32rpx;
+  text-align: center;
+  color: var(--sub);
+  font-size: 25rpx;
+  font-weight: 500;
+  padding: 20rpx 0;
+  letter-spacing: 1rpx;
+}
+.timer-link:active { opacity: 0.7; }

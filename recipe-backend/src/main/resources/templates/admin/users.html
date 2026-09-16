@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{admin/layout :: base('users', ~{::main})}">
+<body>
+<main>
+  <div class="page-title">用户管理</div>
+  <div class="card">
+    <table>
+      <thead>
+      <tr><th>ID</th><th>头像</th><th>昵称</th><th>OpenID</th><th>注册时间</th></tr>
+      </thead>
+      <tbody>
+      <tr th:each="u : ${page.records}">
+        <td th:text="${u.id}">1</td>
+        <td><img class="avatar-thumb" th:if="${u.avatar}" th:src="${u.avatar}"></td>
+        <td th:text="${u.nickname ?: '微信用户'}">Andy</td>
+        <td class="muted" th:text="${u.openid}">demo_xxx</td>
+        <td class="muted" th:text="${u.createdAt != null} ? ${#temporals.format(u.createdAt, 'yyyy-MM-dd HH:mm')} : '—'">2026-08-18</td>
+      </tr>
+      </tbody>
+    </table>
+    <div class="empty-tip" th:if="${#lists.isEmpty(page.records)}">暂无用户</div>
+    <div class="pager">
+      <a th:if="${page.current > 1}" th:href="@{/admin/users(page=${page.current - 1})}">上一页</a>
+      <span class="cur" th:text="${page.current}">1</span>
+      <a th:if="${page.current < page.pages}" th:href="@{/admin/users(page=${page.current + 1})}">下一页</a>
+      <span th:text="'共 ' + ${page.total} + ' 条'">共 0 条</span>
+    </div>
+  </div>
+</main>
+</body>
+</html>

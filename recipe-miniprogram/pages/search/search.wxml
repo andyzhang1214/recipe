@@ -1,0 +1,35 @@
+<view class="page theme-{{theme}} bg-{{skinBg}}" style="{{bgStyle}}">
+  <nav-bar title="搜索" back="{{true}}" theme="{{theme}}" />
+  <!-- 方案A：输入框占满整行，右端内嵌圆形搜索钮；键盘「搜索」键同触发 -->
+  <view class="search-row">
+    <view class="search-wrap">
+      <text class="search-icon"></text>
+      <input class="input search" placeholder="搜索菜名 / 食材 / 菜系" bindinput="onInput" value="{{keyword}}"
+             confirm-type="search" bindconfirm="onSearch" focus />
+      <view class="go-btn {{keyword ? '' : 'dim'}}" bindtap="onSearch" hover-class="go-press">
+        <text class="go-ic"></text>
+      </view>
+    </view>
+  </view>
+
+  <view class="result-list">
+    <view class="recipe-item" wx:for="{{list}}" wx:key="id" data-id="{{item.id}}" bindtap="onRecipeTap" hover-class="pressed">
+      <image class="thumb" src="{{item.cover || '/assets/placeholder.png'}}" mode="aspectFill" lazy-load />
+      <view class="info">
+        <view class="title">{{item.title}}</view>
+        <view class="meta">
+          <text class="meta-star">★</text> {{item.avgStars || 0}} · {{item.ratingCount || 0}} 人评
+        </view>
+      </view>
+      <view class="chevron">›</view>
+    </view>
+  </view>
+
+  <!-- 热门搜索：无结果时引导换词，初始时引导探索 -->
+  <view class="hot" wx:if="{{list.length === 0 && !loading}}">
+    <view class="hot-title">{{keyword ? '没有找到「' + keyword + '」，试试这些' : '热门搜索'}}</view>
+    <view class="hot-tags">
+      <view class="hot-tag" wx:for="{{hotKeywords}}" wx:key="*this" data-kw="{{item}}" bindtap="onHotTap">{{item}}</view>
+    </view>
+  </view>
+</view>

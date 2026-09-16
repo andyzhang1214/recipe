@@ -1,0 +1,185 @@
+/**
+ * 自定义 tabBar：app.json tabBar.custom = true 后由本组件渲染
+ * 经典配色系 → 平铺白底 + 发丝线（贴近原生形态）
+ * cute     → 悬浮白色贴纸胶囊：深可可勾边 + 硬投影 + 粉色虚线激活徽章
+ * clean    → 悬浮深色毛玻璃胶囊
+ * 图标全部纯 CSS 绘制（currentColor 跟随 .tb-item 文字色，激活即换色）
+ *
+ * 布局注意：底部安全区 / 悬浮间距等数值由 index.js 计算后以内联 style 注入。
+ * 组件 wxss 里 env(safe-area-inset-bottom) 与 calc() 混用会整条声明失效，
+ * 曾导致胶囊贴底 + 左右留白丢失，勿改回 CSS 方案。
+ */
+
+.tabbar {
+  display: block;
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 100;
+}
+.bar {
+  display: flex;
+  background: #FFFFFF;
+  padding: 16rpx 4rpx 12rpx; /* 底部 padding 由内联 style 按机型安全区覆盖 */
+}
+.tb-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4rpx;
+  color: #9A8E82;
+}
+.tb-item:active { opacity: 0.72; }
+.tb-ic-box {
+  width: 56rpx;
+  height: 56rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  box-sizing: border-box;
+}
+.tb-txt { font-size: 20rpx; font-weight: 600; line-height: 1; color: inherit; }
+
+/* ---- 纯 CSS 图标 ---- */
+.ic-grid { width: 26rpx; height: 26rpx; position: relative; }
+.ic-grid::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 10rpx;
+  height: 10rpx;
+  border-radius: 3rpx;
+  background: currentColor;
+  box-shadow: 16rpx 0 0 currentColor, 0 16rpx 0 currentColor, 16rpx 16rpx 0 currentColor;
+}
+.ic-plus { width: 28rpx; height: 28rpx; position: relative; }
+.ic-plus::before { content: ''; position: absolute; top: 11rpx; left: 0; width: 28rpx; height: 6rpx; border-radius: 6rpx; background: currentColor; }
+.ic-plus::after { content: ''; position: absolute; left: 11rpx; top: 0; width: 6rpx; height: 28rpx; border-radius: 6rpx; background: currentColor; }
+
+.ic-users { width: 34rpx; height: 28rpx; position: relative; }
+.ic-users::before {
+  content: '';
+  position: absolute;
+  left: 2rpx;
+  top: 0;
+  width: 14rpx;
+  height: 14rpx;
+  border-radius: 50%;
+  background: currentColor;
+  box-shadow: 18rpx 4rpx 0 -3rpx currentColor;
+}
+.ic-users::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 18rpx;
+  height: 12rpx;
+  border-radius: 18rpx 18rpx 0 0;
+  background: currentColor;
+  box-shadow: 16rpx 2rpx 0 -2rpx currentColor;
+}
+
+.ic-tool {
+  width: 28rpx;
+  height: 28rpx;
+  border: 4rpx dashed currentColor;
+  border-radius: 50%;
+  box-sizing: border-box;
+  position: relative;
+}
+.ic-tool::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 8rpx;
+  height: 8rpx;
+  margin: -4rpx 0 0 -4rpx;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.ic-user { width: 30rpx; height: 28rpx; position: relative; }
+.ic-user::before { content: ''; position: absolute; left: 8rpx; top: 0; width: 14rpx; height: 14rpx; border-radius: 50%; background: currentColor; }
+.ic-user::after { content: ''; position: absolute; left: 2rpx; bottom: 0; width: 26rpx; height: 13rpx; border-radius: 26rpx 26rpx 0 0; background: currentColor; }
+
+/* ===== 经典配色系：平铺白底（形态贴近原生 tabBar） ===== */
+.t-light .bar, .t-cream .bar, .t-latte .bar, .t-sage .bar, .t-mist .bar { border-top: 1rpx solid #F0EBE4; }
+.t-light .tb-item.on { color: #E8643E; }
+.t-cream .tb-item.on { color: #E2723E; }
+.t-latte .tb-item.on { color: #B25B2E; }
+.t-sage .tb-item.on { color: #4C8C3A; }
+.t-mist .tb-item.on { color: #2F7DE1; }
+
+/* 经典自定义（调色盘）：bar 底色由内联注入，浅色走暖白形态 */
+.t-custom .bar { border-top: 1rpx solid #F0EBE4; }
+.t-custom .tb-item.on { color: #E8643E; }
+/* 调色盘深底：文字反白（与深色主题同款） */
+.bar-dark .tb-item { color: #9C8F84; }
+.bar-dark .tb-item.on { color: #FF8A5C; }
+
+/* 深色：深底反白 */
+.t-dark .bar { background: #221B15; border-top: 1rpx solid rgba(255, 255, 255, 0.08); }
+.t-dark .tb-item { color: #9C8F84; }
+.t-dark .tb-item.on { color: #FF8A5C; }
+
+/* ===== 皮肤：可爱风「软软食堂」悬浮贴纸胶囊 ===== */
+/* 容器透明 + 底部留白（内联注入）：胶囊悬浮，内容从两侧与下方穿过 */
+.t-cute .bar {
+  background: #FFFFFF;
+  border: 3rpx solid #4E2B36;
+  border-radius: 999rpx;
+  box-shadow: 0 6rpx 0 rgba(78, 43, 54, 0.10), 0 12rpx 32rpx rgba(78, 43, 54, 0.14);
+  padding: 16rpx 6rpx 7px; /* 底部由内联覆盖，与胶囊留白统一 */
+}
+.t-cute .tb-item { color: #BE97A1; }
+.t-cute .tb-item.on { color: #F4577C; }
+.t-cute .tb-item.on .tb-ic-box {
+  background: #FFDCE3;
+  border: 2rpx dashed #F4577C;
+}
+
+/* ===== 皮肤：简洁风「厨房手记」悬浮深色毛玻璃胶囊 ===== */
+.t-clean .bar {
+  background: rgba(27, 26, 24, 0.92);
+  backdrop-filter: saturate(160%) blur(20px);
+  -webkit-backdrop-filter: saturate(160%) blur(20px);
+  border: 1rpx solid rgba(255, 255, 255, 0.10);
+  border-radius: 999rpx;
+  box-shadow: 0 10rpx 30rpx rgba(20, 19, 18, 0.22);
+  padding: 16rpx 4rpx 7px; /* 底部由内联覆盖 */
+}
+.t-clean .tb-item { color: rgba(255, 255, 255, 0.60); }
+.t-clean .tb-item.on { color: #FB923C; }
+.t-clean .tb-txt { font-weight: 500; }
+
+/* ===== 皮肤背景色变体：胶囊底随背景选择联动 ===== */
+/* 可爱风 · 玻璃：半透明磨砂胶囊 */
+.t-cute.bg-glass .bar {
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: saturate(140%) blur(20px);
+  -webkit-backdrop-filter: saturate(140%) blur(20px);
+}
+/* 可爱风 · 淡粉：粉调白胶囊 */
+.t-cute.bg-pink .bar { background: #FFDDE7; }
+/* 可爱风 · 调色盘自选：半透明白磨砂，任意底色上都成立 */
+.t-cute.bg-custom .bar {
+  background: rgba(255, 255, 255, 0.80);
+  backdrop-filter: saturate(140%) blur(20px);
+  -webkit-backdrop-filter: saturate(140%) blur(20px);
+}
+
+/* 简洁风 · 玻璃：更通透的深色玻璃 */
+.t-clean.bg-glass .bar {
+  background: rgba(27, 26, 24, 0.72);
+  border-color: rgba(255, 255, 255, 0.14);
+}
+/* 简洁风 · 淡粉：暗梅调玻璃 */
+.t-clean.bg-pink .bar { background: rgba(66, 38, 48, 0.90); }
+/* 简洁风 · 调色盘自选：通用深色玻璃 */
+.t-clean.bg-custom .bar { background: rgba(27, 26, 24, 0.84); }

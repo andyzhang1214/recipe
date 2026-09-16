@@ -1,0 +1,148 @@
+<wxs module="fmt">
+// 时长格式化：<60秒显示 N秒，否则显示 N分钟
+var fmtDur = function(s) {
+  if (!s || s <= 0) return '';
+  if (s < 60) return s + '秒';
+  return Math.round(s / 60) + '分钟';
+};
+// 可见范围：枚举转中文
+var vis = function(v) {
+  if (v === 'PUBLIC') return '公开';
+  if (v === 'PRIVATE') return '私密';
+  if (v === 'FAMILY') return '圈内可见';
+  return v || '';
+};
+module.exports = { fmtDur: fmtDur, vis: vis };
+</wxs>
+
+<view class="page theme-{{theme}} bg-{{skinBg}}" style="{{bgStyle}}">
+  <nav-bar title="{{navTitle}}" back="{{true}}" theme="{{theme}}" />
+  <block wx:if="{{recipe}}">
+  <!-- 沉浸式封面：圆角悬浮卡片 -->
+  <view class="hero">
+    <swiper wx:if="{{covers.length > 0}}" class="hero-swiper" indicator-dots="{{covers.length > 1}}" circular="{{covers.length > 1}}" indicator-color="rgba(255,255,255,0.4)" indicator-active-color="#ffffff">
+      <swiper-item wx:for="{{covers}}" wx:key="*this">
+        <image class="hero-img" src="{{item}}" mode="aspectFill" lazy-load bindtap="onPreviewCover" data-idx="{{index}}" />
+      </swiper-item>
+    </swiper>
+    <image wx:else class="hero-img" src="{{recipe.cover || '/assets/placeholder.png'}}" mode="aspectFill" lazy-load />
+  </view>
+
+  <view class="page-content detail-body">
+  <view class="card title-card">
+    <view class="head-row">
+      <view class="title-wrap">
+        <view class="title">{{recipe.title}}</view>
+        <view class="author-row" wx:if="{{author}}" hover-class="author-press" data-uid="{{author.id}}" bindtap="onAuthorTap">
+          <image class="author-avatar" src="{{author.avatar || '/assets/placeholder.png'}}" mode="aspectFill" lazy-load />
+          <text class="author-name">{{author.nickname || '匿名'}}</text>
+          <text class="author-sub">· 分享美味 ›</text>
+        </view>
+      </view>
+      <view class="fav-btn {{favorited ? 'on' : ''}}" bindtap="onToggleFavorite">
+        <text class="fav-heart">♥</text>
+        <text class="fav-txt">{{favorited ? '已收藏' : '收藏'}}</text>
+      </view>
+    </view>
+    <view class="meta">
+      <text class="tag {{recipe.visibility === 'PUBLIC' ? 'tag-green' : recipe.visibility === 'PRIVATE' ? 'tag-plain' : 'tag-blue'}} {{isMine ? 'tag-edit' : ''}}" bindtap="{{isMine ? 'openShare' : ''}}">{{fmt.vis(recipe.visibility)}}{{isMine ? ' ✎' : ''}}</text>
+      <text class="tag tag-orange" wx:if="{{recipe.difficulty}}">{{recipe.difficulty}}</text>
+      <!-- 热量：发布时按食材克数自动计算；approx=1 为估算（存在未匹配/未计食材） -->
+      <text class="tag tag-orange" wx:if="{{recipe.totalCalories != null}}">{{recipe.caloriesApprox ? '≈' : ''}}{{recipe.totalCalories}} 千卡{{recipe.caloriesPerServing ? ' · ' + recipe.caloriesPerServing + ' 千卡/份' : ''}}</text>
+      <text class="avg"><text class="avg-star">★</text> {{recipe.avgStars || 0}}（{{recipe.ratingCount || 0}} 人评分）</text>
+    </view>
+  </view>
+
+  <view class="card" wx:if="{{foodIngredients.length}}">
+    <view class="section-head">食材</view>
+    <view class="ing" wx:for="{{foodIngredients}}" wx:key="id">
+      <text class="ing-name">{{item.name}}</text>
+      <text class="ing-amount"><text class="num">{{item.amount}}</text><text class="unit" wx:if="{{item.unit}}"> {{item.unit}}</text></text>
+    </view>
+  </view>
+
+  <view class="card" wx:if="{{seasoningList.length}}">
+    <view class="section-head">调料</view>
+    <view class="ing" wx:for="{{seasoningList}}" wx:key="id">
+      <text class="ing-name">{{item.name}}</text>
+      <text class="ing-amount"><text class="num">{{item.amount}}</text><text class="unit" wx:if="{{item.unit}}"> {{item.unit}}</text></text>
+    </view>
+  </view>
+
+  <view class="card">
+    <view class="section-head">烹饪步骤</view>
+    <view class="step" wx:for="{{steps}}" wx:key="id">
+      <view class="step-no">{{item.ord + 1}}</view>
+      <view class="step-main">
+        <view class="step-text">{{item.text}}</view>
+        <view class="step-meta" wx:if="{{item.durationSec && item.durationSec > 0}}">
+          <text class="meta-icon">⏱</text>{{fmt.fmtDur(item.durationSec)}}
+        </view>
+        <view class="step-seasoning" wx:if="{{item.seasoning}}">酌料：{{item.seasoning}}</view>
+        <image wx:if="{{item.image}}" class="step-image" src="{{item.image}}" mode="aspectFill" lazy-load data-url="{{item.image}}" bindtap="onPreviewStep" />
+      </view>
+    </view>
+  </view>
+
+  <view class="card">
+    <view class="section-head">为这道菜打分</view>
+    <view class="stars">
+      <text class="star {{index < myStars ? 'on' : ''}}" wx:for="{{[1,2,3,4,5]}}" wx:key="*this"
+            data-stars="{{item}}" bindtap="onStar">★</text>
+    </view>
+  </view>
+
+  <view class="card">
+    <view class="section-head">评论</view>
+    <view class="comment" wx:for="{{comments}}" wx:key="id">
+      <view class="c-avatar">{{item.avatarChar || '友'}}</view>
+      <view class="c-main">
+        <view class="c-user">{{item.nickname || '用户' + item.userId}}</view>
+        <view class="c-content">{{item.content}}</view>
+      </view>
+    </view>
+    <view class="comment-empty" wx:if="{{comments.length === 0}}">
+      <view class="empty-icon">💬</view>
+      <view class="empty-text">还没有评论</view>
+      <view class="empty-tip-text">来当第一个尝鲜的人吧</view>
+    </view>
+    <view class="comment-editor">
+      <textarea class="editor-input"
+                placeholder="说点什么，给作者一点鼓励…"
+                maxlength="500"
+                auto-height="{{true}}"
+                show-confirm-bar="{{false}}"
+                adjust-position="{{true}}"
+                bindinput="onComment"
+                value="{{commentText}}"></textarea>
+      <view class="editor-foot">
+        <text class="char-count">{{commentText.length}}/500</text>
+        <button class="editor-submit" bindtap="submitComment" disabled="{{commentText.length === 0}}">发表</button>
+      </view>
+    </view>
+  </view>
+  </view>
+
+  <view class="footer">
+    <button class="btn btn-plain" bindtap="onCookMode">照着做</button>
+    <button class="btn btn-primary" open-type="share">转发给好友</button>
+  </view>
+
+  <!-- 共享：可见范围选择卡 -->
+  <view class="mask" wx:if="{{showShare}}" bindtap="closeShare" />
+  <view class="sheet" wx:if="{{showShare}}">
+    <view class="sheet-title">设置可见范围</view>
+    <picker range="{{visibilityList}}" range-key="label" bindchange="onVisibility">
+      <view class="input">{{chosenVisibilityLabel}} ▾</view>
+    </picker>
+    <picker wx:if="{{chosenVisibility === 'FAMILY' || chosenVisibility === 'TEAM'}}" range="{{families}}"
+            range-key="family.name" bindchange="onFamily">
+      <view class="input select">选择圈层 ▾</view>
+    </picker>
+    <button class="btn btn-primary popup-btn" bindtap="confirmShare">确认</button>
+  </view>
+
+  </block>
+
+  <login-popup id="login-popup" bindlogined="onLogined" />
+</view>

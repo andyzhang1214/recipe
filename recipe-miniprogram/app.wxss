@@ -1,0 +1,850 @@
+/**
+ * ===== 菜谱小程序 · 设计系统 =====
+ * 全局 CSS 变量按主题定义在 .page.theme-* 下，页面根节点 <view class="page theme-{{theme}}">
+ * 8 套主题：cute(可爱风·皮肤) / clean(简洁风·皮肤) + 6 套经典配色
+ * light(暖白·默认) / cream(奶油) / latte(奶咖) / sage(浅绿) / mist(雾蓝) / dark(深色)
+ * 经典配色沿用「温馨厨房」语言（陶土橙 + 大圆角 + 柔和阴影）；
+ * cute / clean 为完整皮肤：同时覆盖色彩与形状令牌（圆角/描边/阴影/按钮形态）
+ */
+
+page {
+  font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'PingFang SC',
+    'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+  font-size: 28rpx;
+  -webkit-font-smoothing: antialiased;
+  color: #2F2A26;
+}
+
+/* ===== 主题变量 ===== */
+.page {
+  min-height: 100vh;
+  box-sizing: border-box;
+  background: var(--bg);
+  /* 形状令牌基线（经典配色系共用；皮肤主题在各自块内覆盖） */
+  --radius-lg: 40rpx;
+  --radius-card: 32rpx;
+  --radius-md: 24rpx;
+  --radius-sm: 16rpx;
+  --radius-btn: 999rpx;
+  --radius-input: 20rpx;
+  --radius-tag: 999rpx;
+  --card-outline: 1rpx solid rgba(255, 255, 255, 0.55);
+  --btn-primary-bg: var(--accent-grad);
+  --btn-primary-text: var(--btn-text);
+  --btn-primary-border: 0;
+  --btn-primary-shadow: 0 10rpx 28rpx var(--glow);
+  --star: #F5A623;
+  /* 标题字体：可爱风换手写体（loadFontFace 加载失败自动降级苹方） */
+  --font-title: inherit;
+}
+
+/* ===== 皮肤：可爱风「软软食堂」 =====
+ * 贴纸手账语言：白卡 + 深可可勾边 + 硬投影，草莓粉渐变主按钮，奶油甜点色系 */
+.page.theme-cute {
+  --bg: #FFF6EF;
+  --card: #FFFFFF;
+  --card2: #FBEFE6;
+  --text: #4E2B36;
+  --sub: #A9868F;
+  --border: #EAD2D8;
+  --accent: #F4577C;
+  --accent-weak: #FFDCE3;
+  --btn-text: #FFFFFF;
+  --fill: #FBEFE6;
+  --danger: #E94B6A;
+  --danger-weak: #FFDDE4;
+  --warn: #D97F1F;
+  --warn-weak: #FFF0C9;
+  --ok: #1FA97D;
+  --ok-weak: #DCF6ED;
+  --info: #4A90C9;
+  --info-weak: #DCECFF;
+  --shadow: 8rpx 8rpx 0 rgba(78, 43, 54, 0.10);
+  --shadow-sm: 4rpx 4rpx 0 rgba(78, 43, 54, 0.10);
+  --shadow-lg: 12rpx 12rpx 0 rgba(78, 43, 54, 0.14);
+  --nav-blur: rgba(255, 246, 239, 0.88);
+  --accent-grad: linear-gradient(135deg, #FFA3B8 0%, #FF6E8E 100%);
+  --accent-grad-soft: linear-gradient(135deg, rgba(255, 163, 184, 0.20) 0%, rgba(255, 110, 142, 0.20) 100%);
+  --cover-grad: linear-gradient(180deg, rgba(78, 43, 54, 0) 45%, rgba(78, 43, 54, 0.52) 100%);
+  --glow: rgba(255, 110, 142, 0.32);
+  /* 形状令牌：更大圆角 + 深色勾边 + 胶囊输入 */
+  --radius-lg: 52rpx;
+  --radius-card: 44rpx;
+  --radius-md: 36rpx;
+  --radius-sm: 28rpx;
+  --radius-btn: 999rpx;
+  --radius-input: 28rpx;
+  --radius-tag: 999rpx;
+  --card-outline: 3rpx solid #4E2B36;
+  --btn-primary-bg: linear-gradient(135deg, #FFA3B8 0%, #FF6E8E 100%);
+  --btn-primary-text: #FFFFFF;
+  --btn-primary-border: 3rpx solid #4E2B36;
+  --btn-primary-shadow: 5rpx 5rpx 0 rgba(78, 43, 54, 0.18);
+  --star: #FFB53C;
+  --font-title: 'ZCOOL KuaiLe', 'PingFang SC', 'Hiragino Sans GB', sans-serif;
+  /* 奶油底 + 草莓波点纹理 */
+  background-color: #FFF6EF;
+  background-image: radial-gradient(rgba(255, 110, 142, 0.10) 4rpx, transparent 4rpx);
+  background-size: 56rpx 56rpx;
+  background-position: 0 0;
+}
+
+/* ===== 皮肤：简洁干练风「厨房手记」 =====
+ * 编辑部手记语言：细线分割 + 小圆角 + 黑底主按钮，暖灰底 + 焦橙点缀 */
+.page.theme-clean {
+  --bg: #F5F4F2;
+  --card: #FFFFFF;
+  --card2: #F0EEEB;
+  --text: #1B1A18;
+  --sub: #7A7670;
+  --border: rgba(27, 26, 24, 0.10);
+  --accent: #C2410C;
+  --accent-weak: #FBEDE4;
+  --btn-text: #FFFFFF;
+  --fill: #F0EEEB;
+  --danger: #C03526;
+  --danger-weak: rgba(192, 53, 38, 0.10);
+  --warn: #A16207;
+  --warn-weak: rgba(161, 98, 7, 0.12);
+  --ok: #1F7A4D;
+  --ok-weak: rgba(31, 122, 77, 0.10);
+  --info: #3E6B99;
+  --info-weak: rgba(62, 107, 153, 0.10);
+  --shadow: 0 8rpx 24rpx rgba(20, 19, 18, 0.06);
+  --shadow-sm: 0 2rpx 8rpx rgba(20, 19, 18, 0.05);
+  --shadow-lg: 0 16rpx 48rpx rgba(20, 19, 18, 0.12);
+  --nav-blur: rgba(245, 244, 242, 0.88);
+  --accent-grad: linear-gradient(135deg, #D2551F 0%, #B23A06 100%);
+  --accent-grad-soft: linear-gradient(135deg, rgba(194, 65, 12, 0.12) 0%, rgba(178, 58, 6, 0.12) 100%);
+  --cover-grad: linear-gradient(180deg, rgba(20, 19, 18, 0) 45%, rgba(20, 19, 18, 0.55) 100%);
+  --glow: rgba(194, 65, 12, 0.22);
+  /* 形状令牌：小圆角 + 细边 + 方角按钮 */
+  --radius-lg: 24rpx;
+  --radius-card: 16rpx;
+  --radius-md: 12rpx;
+  --radius-sm: 8rpx;
+  --radius-btn: 12rpx;
+  --radius-input: 12rpx;
+  --radius-tag: 8rpx;
+  --card-outline: 1rpx solid rgba(27, 26, 24, 0.08);
+  --btn-primary-bg: #171614;
+  --btn-primary-text: #FFFFFF;
+  --btn-primary-border: 0;
+  --btn-primary-shadow: none;
+  --star: #D99128;
+}
+
+/* ===== 皮肤自选背景（皮肤主题下叠加 bg-glass / bg-pink 类） ===== */
+/* 可爱风 · 磨砂玻璃：奶白底 + 白色光泽渐变，波点更淡 */
+.page.theme-cute.bg-glass {
+  --bg: #FCF1F4;
+  --nav-blur: rgba(252, 241, 244, 0.88);
+  background-color: #FCF1F4;
+  background-image:
+    radial-gradient(circle at 18% 8%, rgba(255, 255, 255, 0.85), transparent 44%),
+    radial-gradient(circle at 85% 94%, rgba(255, 255, 255, 0.60), transparent 38%),
+    radial-gradient(rgba(255, 110, 142, 0.06) 4rpx, transparent 4rpx);
+  background-size: 100% 100%, 100% 100%, 56rpx 56rpx;
+  background-repeat: no-repeat, no-repeat, repeat;
+}
+/* 可爱风 · 淡粉：草莓淡粉底 + 加浓波点 */
+.page.theme-cute.bg-pink {
+  --bg: #FFE4EC;
+  --nav-blur: rgba(255, 228, 236, 0.88);
+  background-color: #FFE4EC;
+  background-image: radial-gradient(rgba(255, 110, 142, 0.14) 4rpx, transparent 4rpx);
+  background-size: 56rpx 56rpx;
+}
+/* 简洁风 · 磨砂玻璃：冷调浅灰 + 白色光泽 */
+.page.theme-clean.bg-glass {
+  --bg: #EFF1F4;
+  --nav-blur: rgba(239, 241, 244, 0.88);
+  background-color: #EFF1F4;
+  background-image:
+    radial-gradient(circle at 20% 10%, rgba(255, 255, 255, 0.80), transparent 46%),
+    linear-gradient(160deg, rgba(255, 255, 255, 0.28), rgba(255, 255, 255, 0.06));
+}
+/* 简洁风 · 淡粉：编辑手记风的柔和粉底 */
+.page.theme-clean.bg-pink {
+  --bg: #FAEBF0;
+  --nav-blur: rgba(250, 235, 240, 0.88);
+  background-color: #FAEBF0;
+}
+
+/* 暖白（默认） */
+.page.theme-light {
+  --bg: #FAF6F1;
+  --card: #FFFFFF;
+  --card2: #F6EFE6;
+  --text: #2F2A26;
+  --sub: #8B7F73;
+  --border: rgba(47, 42, 38, 0.08);
+  --accent: #E8643E;
+  --accent-weak: rgba(232, 100, 62, 0.12);
+  --btn-text: #FFFFFF;
+  --fill: rgba(120, 100, 80, 0.10);
+  --danger: #D1493C;
+  --danger-weak: rgba(209, 73, 60, 0.12);
+  --warn: #B8731F;
+  --warn-weak: rgba(184, 115, 31, 0.14);
+  --ok: #4E8A4E;
+  --ok-weak: rgba(78, 138, 78, 0.12);
+  --info: #3E6FA3;
+  --info-weak: rgba(62, 111, 163, 0.12);
+  --shadow: 0 10rpx 36rpx rgba(176, 128, 86, 0.10);
+  --shadow-sm: 0 4rpx 16rpx rgba(176, 128, 86, 0.07);
+  --shadow-lg: 0 20rpx 60rpx rgba(176, 128, 86, 0.16);
+  --nav-blur: rgba(250, 246, 241, 0.80);
+  --accent-grad: linear-gradient(135deg, #F0805A 0%, #E25A3C 100%);
+  --accent-grad-soft: linear-gradient(135deg, rgba(240, 128, 90, 0.16) 0%, rgba(226, 90, 60, 0.16) 100%);
+  --cover-grad: linear-gradient(180deg, rgba(20, 12, 6, 0) 45%, rgba(20, 12, 6, 0.55) 100%);
+  --glow: rgba(240, 128, 90, 0.35);
+}
+
+/* 经典自定义（调色盘）：token 复用暖白，底色由页面内联 style 覆盖 */
+.page.theme-custom {
+  --bg: #FAF6F1;
+  --card: #FFFFFF;
+  --card2: #F6EFE6;
+  --text: #2F2A26;
+  --sub: #8B7F73;
+  --border: rgba(47, 42, 38, 0.08);
+  --accent: #E8643E;
+  --accent-weak: rgba(232, 100, 62, 0.12);
+  --btn-text: #FFFFFF;
+  --fill: rgba(120, 100, 80, 0.10);
+  --danger: #D1493C;
+  --danger-weak: rgba(209, 73, 60, 0.12);
+  --warn: #B8731F;
+  --warn-weak: rgba(184, 115, 31, 0.14);
+  --ok: #4E8A4E;
+  --ok-weak: rgba(78, 138, 78, 0.12);
+  --info: #3E6FA3;
+  --info-weak: rgba(62, 111, 163, 0.12);
+  --shadow: 0 10rpx 36rpx rgba(176, 128, 86, 0.10);
+  --shadow-sm: 0 4rpx 16rpx rgba(176, 128, 86, 0.07);
+  --shadow-lg: 0 20rpx 60rpx rgba(176, 128, 86, 0.16);
+  --nav-blur: rgba(250, 246, 241, 0.80);
+  --accent-grad: linear-gradient(135deg, #F0805A 0%, #E25A3C 100%);
+  --accent-grad-soft: linear-gradient(135deg, rgba(240, 128, 90, 0.16) 0%, rgba(226, 90, 60, 0.16) 100%);
+  --cover-grad: linear-gradient(180deg, rgba(20, 12, 6, 0) 45%, rgba(20, 12, 6, 0.55) 100%);
+  --glow: rgba(240, 128, 90, 0.35);
+}
+
+/* 奶油 */
+.page.theme-cream {
+  --bg: #F8F2E8;
+  --card: #FFFDF8;
+  --card2: #F3EBDE;
+  --text: #3A342B;
+  --sub: #8F8372;
+  --border: rgba(58, 52, 43, 0.09);
+  --accent: #E2723E;
+  --accent-weak: rgba(226, 114, 62, 0.13);
+  --btn-text: #FFFFFF;
+  --fill: rgba(120, 100, 80, 0.10);
+  --danger: #C7472F;
+  --danger-weak: rgba(199, 71, 47, 0.12);
+  --warn: #A97718;
+  --warn-weak: rgba(169, 119, 24, 0.14);
+  --ok: #5B8C3A;
+  --ok-weak: rgba(91, 140, 58, 0.12);
+  --info: #3E6B99;
+  --info-weak: rgba(62, 107, 153, 0.12);
+  --shadow: 0 10rpx 36rpx rgba(150, 112, 72, 0.10);
+  --shadow-sm: 0 4rpx 16rpx rgba(150, 112, 72, 0.07);
+  --shadow-lg: 0 20rpx 60rpx rgba(150, 112, 72, 0.16);
+  --nav-blur: rgba(248, 242, 232, 0.80);
+  --accent-grad: linear-gradient(135deg, #F0946A 0%, #E0643A 100%);
+  --accent-grad-soft: linear-gradient(135deg, rgba(240, 148, 106, 0.16) 0%, rgba(224, 100, 58, 0.16) 100%);
+  --cover-grad: linear-gradient(180deg, rgba(20, 12, 6, 0) 45%, rgba(20, 12, 6, 0.55) 100%);
+  --glow: rgba(240, 148, 106, 0.35);
+}
+
+/* 奶咖 */
+.page.theme-latte {
+  --bg: #F3EBDF;
+  --card: #FFFBF3;
+  --card2: #EFE5D6;
+  --text: #3B332A;
+  --sub: #8F8270;
+  --border: rgba(59, 51, 42, 0.09);
+  --accent: #B25B2E;
+  --accent-weak: rgba(178, 91, 46, 0.13);
+  --btn-text: #FFFFFF;
+  --fill: rgba(110, 90, 65, 0.10);
+  --danger: #C1493A;
+  --danger-weak: rgba(193, 73, 58, 0.12);
+  --warn: #9A7418;
+  --warn-weak: rgba(154, 116, 24, 0.14);
+  --ok: #5D8A3C;
+  --ok-weak: rgba(93, 138, 60, 0.12);
+  --info: #4A6F96;
+  --info-weak: rgba(74, 111, 150, 0.12);
+  --shadow: 0 10rpx 36rpx rgba(130, 96, 62, 0.11);
+  --shadow-sm: 0 4rpx 16rpx rgba(130, 96, 62, 0.08);
+  --shadow-lg: 0 20rpx 60rpx rgba(130, 96, 62, 0.17);
+  --nav-blur: rgba(243, 235, 223, 0.80);
+  --accent-grad: linear-gradient(135deg, #CB7B4C 0%, #A24B22 100%);
+  --accent-grad-soft: linear-gradient(135deg, rgba(203, 123, 76, 0.18) 0%, rgba(162, 75, 34, 0.18) 100%);
+  --cover-grad: linear-gradient(180deg, rgba(20, 12, 6, 0) 45%, rgba(20, 12, 6, 0.55) 100%);
+  --glow: rgba(203, 123, 76, 0.35);
+}
+
+/* 浅绿 */
+.page.theme-sage {
+  --bg: #F1F4EC;
+  --card: #FBFFFA;
+  --card2: #EEF3E8;
+  --text: #2C352A;
+  --sub: #7D8A76;
+  --border: rgba(44, 53, 42, 0.09);
+  --accent: #4C8C3A;
+  --accent-weak: rgba(76, 140, 58, 0.13);
+  --btn-text: #FFFFFF;
+  --fill: rgba(80, 100, 70, 0.10);
+  --danger: #C4453A;
+  --danger-weak: rgba(196, 69, 58, 0.12);
+  --warn: #9A7A1E;
+  --warn-weak: rgba(154, 122, 30, 0.14);
+  --ok: #3C8A4E;
+  --ok-weak: rgba(60, 138, 78, 0.12);
+  --info: #3E6B99;
+  --info-weak: rgba(62, 107, 153, 0.12);
+  --shadow: 0 10rpx 36rpx rgba(90, 110, 76, 0.10);
+  --shadow-sm: 0 4rpx 16rpx rgba(90, 110, 76, 0.07);
+  --shadow-lg: 0 20rpx 60rpx rgba(90, 110, 76, 0.16);
+  --nav-blur: rgba(241, 244, 236, 0.80);
+  --accent-grad: linear-gradient(135deg, #6BA85A 0%, #3E7A2E 100%);
+  --accent-grad-soft: linear-gradient(135deg, rgba(107, 168, 90, 0.16) 0%, rgba(62, 122, 46, 0.16) 100%);
+  --cover-grad: linear-gradient(180deg, rgba(20, 12, 6, 0) 45%, rgba(20, 12, 6, 0.55) 100%);
+  --glow: rgba(107, 168, 90, 0.35);
+}
+
+/* 雾蓝 */
+.page.theme-mist {
+  --bg: #EEF2F6;
+  --card: #FFFFFF;
+  --card2: #F0F3F7;
+  --text: #26303C;
+  --sub: #7C8998;
+  --border: rgba(38, 48, 60, 0.08);
+  --accent: #2F7DE1;
+  --accent-weak: rgba(47, 125, 225, 0.12);
+  --btn-text: #FFFFFF;
+  --fill: rgba(60, 80, 105, 0.09);
+  --danger: #D0424F;
+  --danger-weak: rgba(208, 66, 79, 0.12);
+  --warn: #B0751B;
+  --warn-weak: rgba(176, 117, 27, 0.14);
+  --ok: #2E8B57;
+  --ok-weak: rgba(46, 139, 87, 0.12);
+  --info: #1D6FB8;
+  --info-weak: rgba(29, 111, 184, 0.12);
+  --shadow: 0 10rpx 36rpx rgba(70, 100, 140, 0.10);
+  --shadow-sm: 0 4rpx 16rpx rgba(70, 100, 140, 0.07);
+  --shadow-lg: 0 20rpx 60rpx rgba(70, 100, 140, 0.16);
+  --nav-blur: rgba(238, 242, 246, 0.80);
+  --accent-grad: linear-gradient(135deg, #5B9BF0 0%, #2F6FD4 100%);
+  --accent-grad-soft: linear-gradient(135deg, rgba(91, 155, 240, 0.15) 0%, rgba(47, 111, 212, 0.15) 100%);
+  --cover-grad: linear-gradient(180deg, rgba(10, 16, 24, 0) 45%, rgba(10, 16, 24, 0.55) 100%);
+  --glow: rgba(91, 155, 240, 0.35);
+}
+
+/* 深色 */
+.page.theme-dark {
+  --bg: #16120E;
+  --card: #221C16;
+  --card2: #2E2720;
+  --text: #F2ECE3;
+  --sub: #A29A8E;
+  --border: rgba(255, 255, 255, 0.09);
+  --accent: #FF8A5C;
+  --accent-weak: rgba(255, 138, 92, 0.18);
+  --btn-text: #1D140E;
+  --fill: rgba(255, 255, 255, 0.09);
+  --danger: #FF7A6B;
+  --danger-weak: rgba(255, 122, 107, 0.16);
+  --warn: #FFB84D;
+  --warn-weak: rgba(255, 184, 77, 0.16);
+  --ok: #7CD98C;
+  --ok-weak: rgba(124, 217, 140, 0.16);
+  --info: #7FB6FF;
+  --info-weak: rgba(127, 182, 255, 0.16);
+  --shadow: 0 10rpx 36rpx rgba(0, 0, 0, 0.40);
+  --shadow-sm: 0 4rpx 16rpx rgba(0, 0, 0, 0.30);
+  --shadow-lg: 0 20rpx 60rpx rgba(0, 0, 0, 0.55);
+  --nav-blur: rgba(22, 18, 14, 0.80);
+  --accent-grad: linear-gradient(135deg, #FF9A70 0%, #F0743E 100%);
+  --accent-grad-soft: linear-gradient(135deg, rgba(255, 154, 112, 0.18) 0%, rgba(240, 116, 62, 0.18) 100%);
+  --cover-grad: linear-gradient(180deg, rgba(0, 0, 0, 0) 40%, rgba(0, 0, 0, 0.65) 100%);
+  --glow: rgba(255, 138, 92, 0.40);
+}
+
+/* ===== 页面容器 ===== */
+.page-content {
+  padding: 16rpx 28rpx 200rpx;
+  box-sizing: border-box;
+}
+
+/* 通用页头（问候/标题） */
+.page-header {
+  padding: 28rpx 8rpx 24rpx;
+}
+.page-header .h-title {
+  font-size: 44rpx;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: 1rpx;
+  line-height: 1.3;
+  font-family: var(--font-title);
+}
+.page-header .h-sub {
+  font-size: 26rpx;
+  color: var(--sub);
+  margin-top: 10rpx;
+  line-height: 1.5;
+}
+/* 只留副标语（标题在自定义导航栏）：去掉相对标题的缩进 */
+.page-header.header-only-sub .h-sub { margin-top: 0; }
+
+/* 分区标题 */
+.section-head {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  font-size: 32rpx;
+  font-weight: 700;
+  color: var(--text);
+  margin: 8rpx 4rpx 20rpx;
+  letter-spacing: 1rpx;
+  font-family: var(--font-title);
+}
+.section-head::before {
+  content: '';
+  width: 10rpx;
+  height: 32rpx;
+  border-radius: 6rpx;
+  background: var(--accent-grad);
+  flex-shrink: 0;
+}
+
+/* ===== 卡片（形状令牌驱动：经典=柔和大圆角 / 可爱=勾边贴纸 / 简洁=细线小圆角） ===== */
+.card {
+  background: var(--card);
+  border-radius: var(--radius-card);
+  padding: 32rpx;
+  margin: 20rpx 0;
+  box-shadow: var(--shadow);
+  border: var(--card-outline);
+}
+.card.grouped {
+  margin: 20rpx 0;
+  overflow: hidden;
+  padding: 0;
+  border: none;
+}
+.cell {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 30rpx 32rpx;
+  border-bottom: 1rpx solid var(--border);
+  background: var(--card);
+}
+.cell:last-child { border-bottom: none; }
+.cell-label { font-size: 29rpx; color: var(--text); font-weight: 500; }
+.cell-value { font-size: 28rpx; color: var(--sub); display: flex; align-items: center; }
+
+/* ===== 按钮（形状令牌驱动：经典/可爱=渐变胶囊 / 简洁=黑底方角） ===== */
+.btn {
+  border-radius: var(--radius-btn);
+  font-size: 30rpx;
+  font-weight: 600;
+  height: 92rpx;
+  line-height: 92rpx;
+  text-align: center;
+  padding: 0 44rpx;
+  box-sizing: border-box;
+  transition: all 0.18s ease;
+  letter-spacing: 1rpx;
+}
+.btn::after { border: none; }
+.btn:active { opacity: 0.82; transform: scale(0.98); }
+.btn-primary {
+  background: var(--btn-primary-bg);
+  color: var(--btn-primary-text);
+  border: var(--btn-primary-border);
+  box-shadow: var(--btn-primary-shadow);
+}
+.btn-plain {
+  background: transparent;
+  color: var(--accent);
+  border: 2rpx solid var(--accent);
+  line-height: 88rpx;
+}
+.btn-ghost {
+  background: var(--fill);
+  color: var(--text);
+}
+.btn[disabled] { opacity: 0.4; box-shadow: none; }
+
+/* 胶囊小按钮 */
+.btn-sm {
+  display: inline-flex;
+  align-items: center;
+  height: 60rpx;
+  line-height: 1;
+  padding: 0 28rpx;
+  border-radius: 999rpx;
+  font-size: 25rpx;
+  font-weight: 500;
+}
+.btn-sm::after { border: none; }
+.btn-sm.primary { background: var(--btn-primary-bg); color: var(--btn-primary-text); box-shadow: var(--btn-primary-shadow); border: var(--btn-primary-border); }
+.btn-sm.ghost { background: var(--fill); color: var(--text); }
+.btn-sm.outline { border: 2rpx solid var(--accent); color: var(--accent); background: transparent; }
+
+/* ===== 输入 ===== */
+.input {
+  background: var(--fill);
+  border-radius: var(--radius-input);
+  padding: 24rpx 30rpx;
+  font-size: 29rpx;
+  color: var(--text);
+  border: 2rpx solid transparent;
+  transition: all 0.2s ease;
+}
+.input::placeholder { color: var(--sub); }
+.input.ios-search {
+  border-radius: 999rpx;
+  background: var(--fill);
+  font-size: 29rpx;
+  padding: 22rpx 34rpx;
+}
+
+/* ===== 标签（胶囊） ===== */
+.tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 8rpx 22rpx;
+  border-radius: var(--radius-tag);
+  font-size: 22rpx;
+  font-weight: 500;
+  margin-right: 12rpx;
+  letter-spacing: 0.5rpx;
+}
+.tag-red { background: var(--danger-weak); color: var(--danger); }
+.tag-orange { background: var(--warn-weak); color: var(--warn); }
+.tag-green { background: var(--ok-weak); color: var(--ok); }
+.tag-blue { background: var(--info-weak); color: var(--info); }
+.tag-plain { background: var(--fill); color: var(--sub); }
+/* 可编辑态标签（作者可见范围等）：虚线描边 + 按压反馈 */
+.tag-edit { border: 1.5rpx dashed var(--accent); padding: 6.5rpx 20rpx; }
+.tag-edit:active { opacity: 0.6; }
+
+/* ===== 空态 ===== */
+.empty {
+  text-align: center;
+  color: var(--sub);
+  padding: 140rpx 40rpx;
+  font-size: 28rpx;
+  line-height: 1.6;
+}
+.empty-icon {
+  font-size: 88rpx;
+  display: block;
+  margin-bottom: 24rpx;
+  opacity: 0.6;
+}
+.empty small { font-size: 24rpx; }
+
+/* ===== 弹层 ===== */
+.mask {
+  position: fixed;
+  inset: 0;
+  background: rgba(30, 20, 12, 0.45);
+  z-index: 99;
+}
+.sheet {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--card);
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  padding: 44rpx 40rpx calc(44rpx + env(safe-area-inset-bottom));
+  z-index: 100;
+  animation: sheet-up 0.3s cubic-bezier(0.32, 0.72, 0, 1);
+  box-shadow: 0 -20rpx 60rpx rgba(40, 25, 12, 0.14);
+}
+@keyframes sheet-up {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+.center-dialog {
+  background: var(--card);
+  border-radius: var(--radius-card);
+  padding: 44rpx;
+  width: 600rpx;
+  box-shadow: var(--shadow-lg);
+}
+
+/* 分段选择（胶囊 segmented） */
+.seg {
+  display: flex;
+  background: var(--fill);
+  border-radius: var(--radius-btn);
+  padding: 8rpx;
+}
+.seg-item {
+  flex: 1;
+  text-align: center;
+  padding: 16rpx 0;
+  font-size: 27rpx;
+  color: var(--sub);
+  border-radius: var(--radius-tag);
+  transition: all 0.22s ease;
+}
+.seg-item.active {
+  background: var(--card);
+  color: var(--text);
+  font-weight: 600;
+  box-shadow: 0 4rpx 14rpx rgba(120, 90, 60, 0.14);
+}
+
+/* 列表项 */
+.row-item {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+  padding: 26rpx 0;
+  border-bottom: 1rpx solid var(--border);
+}
+.row-item:last-child { border-bottom: none; }
+
+/* 卡片内标题 */
+.card-title {
+  font-size: 32rpx;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 22rpx;
+  letter-spacing: 1rpx;
+  font-family: var(--font-title);
+}
+
+/* 通用弹层标题 / 底部按钮 */
+.sheet-title {
+  font-size: 34rpx;
+  font-weight: 700;
+  color: var(--text);
+  text-align: center;
+  margin-bottom: 32rpx;
+  letter-spacing: 1rpx;
+  font-family: var(--font-title);
+}
+.sheet-close { width: 100%; }
+.sheet-btn { width: 100%; margin-top: 40rpx; }
+.sheet-sub {
+  font-size: 22rpx;
+  color: var(--sub);
+  text-align: center;
+  margin: -18rpx 0 26rpx;
+  letter-spacing: 0.5rpx;
+}
+
+/* ===== 邀请弹层（队伍 / 冰箱共用） ===== */
+/* view 卡（承载视觉）；分享卡内含透明 button 覆盖层（.inv-share-btn）承担点击 */
+.inv-card {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 22rpx;
+  height: 148rpx;
+  padding: 0 26rpx;
+  background: var(--fill);
+  border: var(--card-outline);
+  border-radius: var(--radius-card);
+  margin-bottom: 20rpx;
+  text-align: left;
+  line-height: 1.5;
+  font-size: inherit;
+  width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
+  transition: transform 0.15s ease;
+}
+button.inv-card {
+  /* 已废弃：覆盖层模式下 button 不再承担卡片外形（见 .inv-share-btn），
+     规则保留防御其他场景误用 class 组合 */
+  display: none;
+}
+.inv-card.share { background: var(--accent-grad-soft); }
+.inv-share-btn {
+  /* 分享覆盖层：铺满整张卡片的透明 button——view 负责视觉，button 只负责触发 share。
+     UA 的 line-height/padding/font-size 全部清零，高度由 100% 决定，不再受默认样式干扰 */
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0 !important;
+  padding: 0 !important;
+  background: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+  line-height: 1 !important;
+  font-size: 0 !important;
+  color: transparent !important;
+  overflow: hidden !important;
+  z-index: 3;
+}
+.inv-press { transform: scale(0.98); opacity: 0.9; }
+.inv-ic {
+  width: 84rpx;
+  height: 84rpx;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 40rpx;
+  line-height: 1;
+  flex-shrink: 0;
+  background: var(--card);
+}
+.inv-main { flex: 1; min-width: 0; }
+.inv-name { font-size: 29rpx; font-weight: 700; color: var(--text); }
+.inv-desc { font-size: 22rpx; color: var(--sub); margin-top: 6rpx; }
+.inv-chev {
+  width: 16rpx;
+  height: 16rpx;
+  border-right: 4rpx solid var(--sub);
+  border-bottom: 4rpx solid var(--sub);
+  transform: rotate(45deg);
+  transition: transform 0.2s ease;
+  flex-shrink: 0;
+  opacity: 0.6;
+}
+.inv-chev.open { transform: rotate(225deg); }
+.inv-go {
+  width: 16rpx;
+  height: 16rpx;
+  border-right: 4rpx solid var(--accent);
+  border-bottom: 4rpx solid var(--accent);
+  transform: rotate(-45deg);
+  flex-shrink: 0;
+  opacity: 0.85;
+}
+
+/* 展开面板：有效期分段选择 + 生成按钮 + 邀请码票据 */
+.inv-panel { padding: 2rpx 4rpx 6rpx; }
+.inv-panel-row { display: flex; align-items: center; gap: 20rpx; margin-bottom: 20rpx; }
+.inv-panel-label { font-size: 25rpx; color: var(--sub); font-weight: 500; flex-shrink: 0; }
+.seg {
+  flex: 1;
+  display: flex;
+  gap: 6rpx;
+  background: var(--fill);
+  border-radius: var(--radius-btn);
+  padding: 6rpx;
+}
+.seg-item {
+  flex: 1;
+  text-align: center;
+  font-size: 24rpx;
+  color: var(--sub);
+  font-weight: 600;
+  padding: 12rpx 0;
+  border-radius: var(--radius-btn);
+  line-height: 1.4;
+  box-sizing: border-box;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+.seg-item.active {
+  background: var(--card);
+  color: var(--accent);
+  font-weight: 700;
+  box-shadow: var(--shadow-sm);
+}
+.inv-gen { margin-top: 4rpx; }
+
+/* 邀请码票据：虚线边 + 大号码 + 点击复制 */
+.ticket {
+  margin-top: 20rpx;
+  border: 2rpx dashed var(--accent);
+  border-radius: var(--radius-md);
+  background: var(--card2);
+  padding: 32rpx 24rpx 24rpx;
+  text-align: center;
+  transition: transform 0.15s ease;
+}
+.ticket-press { transform: scale(0.97); }
+.tk-code {
+  font-size: 42rpx;
+  font-weight: 800;
+  letter-spacing: 4rpx;
+  color: var(--accent);
+  font-family: 'DIN Alternate', -apple-system, monospace;
+  word-break: break-all;
+}
+.tk-meta { font-size: 22rpx; color: var(--sub); margin-top: 12rpx; }
+.tk-hint { font-size: 20rpx; color: var(--accent); opacity: 0.75; margin-top: 12rpx; letter-spacing: 2rpx; }
+
+/* 邀请与输码加入的分隔 */
+.inv-divider {
+  border-top: 2rpx dashed var(--border);
+  margin: 28rpx 0 4rpx;
+}
+
+/* 按压反馈 */
+.pressed { opacity: 0.85; }
+
+/* ===== 皮肤细节 · 可爱风「软软食堂」 ===== */
+/* 主按钮加勾边后修正文字行高 */
+.page.theme-cute .btn-primary { line-height: 86rpx; }
+/* 描边按钮：白底 + 可可勾边 + 硬投影 */
+.page.theme-cute .btn-plain {
+  background: #FFFFFF;
+  border: 3rpx solid #4E2B36;
+  line-height: 86rpx;
+  box-shadow: 4rpx 4rpx 0 rgba(78, 43, 54, 0.12);
+}
+.page.theme-cute .btn-sm.outline { border: 2rpx solid #4E2B36; color: #F4577C; }
+/* 分组分隔：虚线缝纫感 */
+.page.theme-cute .cell { border-bottom: 2rpx dashed var(--border); }
+.page.theme-cute .row-item { border-bottom: 2rpx dashed var(--border); }
+/* 分组卡保留贴纸勾边 */
+.page.theme-cute .card.grouped { border: var(--card-outline); }
+/* 分区标题竖条变圆豆 */
+.page.theme-cute .section-head::before { border-radius: 999rpx; }
+/* 可编辑标签加深虚线 */
+.page.theme-cute .tag-edit { border: 2rpx dashed var(--accent); }
+/* 分段选中态：勾边贴纸 */
+.page.theme-cute .seg-item.active {
+  border: 2rpx dashed var(--accent);
+  box-shadow: 3rpx 3rpx 0 rgba(78, 43, 54, 0.10);
+}
+/* 邀请码票据：贴纸化虚线 + 硬投影 */
+.page.theme-cute .ticket {
+  border-width: 3rpx;
+  box-shadow: 4rpx 4rpx 0 rgba(78, 43, 54, 0.10);
+}
+/* 输入聚焦：可可勾边 */
+.page.theme-cute .input:focus { border-color: #4E2B36; }
+
+/* ===== 皮肤细节 · 简洁风「厨房手记」 ===== */
+/* 数字等宽对齐（计时/热量/统计） */
+.page.theme-clean { font-variant-numeric: tabular-nums; }
+/* 分区标题竖条变细杠 */
+.page.theme-clean .section-head::before { width: 6rpx; height: 28rpx; border-radius: 2rpx; }
+/* 分段选中态：细边浮层 */
+.page.theme-clean .seg-item.active {
+  border: 1rpx solid var(--border);
+  box-shadow: 0 1rpx 4rpx rgba(20, 19, 18, 0.06);
+}
+/* 描边按钮收细 */
+.page.theme-clean .btn-plain { border-width: 1rpx; line-height: 90rpx; }
+/* 弹层顶边细线 */
+.page.theme-clean .sheet { box-shadow: 0 -12rpx 48rpx rgba(20, 19, 18, 0.10); }
+/* 卡片去白描边残留，仅细线 */
+.page.theme-clean .card.grouped { border: var(--card-outline); }

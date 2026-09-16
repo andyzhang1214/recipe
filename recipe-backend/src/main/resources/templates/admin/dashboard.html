@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{admin/layout :: base('dashboard', ~{::main})}">
+<body>
+<main>
+  <div class="page-title">仪表盘</div>
+  <div class="stat-grid">
+    <div class="stat"><div class="num accent" th:text="${recipeCount}">0</div><div class="label">菜谱总数</div></div>
+    <div class="stat"><div class="num" th:text="${publicCount}">0</div><div class="label">公开菜谱（广场可见）</div></div>
+    <div class="stat"><div class="num" th:text="${todayRecipe}">0</div><div class="label">今日新增菜谱</div></div>
+    <div class="stat"><div class="num accent" th:text="${userCount}">0</div><div class="label">注册用户</div></div>
+    <div class="stat"><div class="num" th:text="${todayUser}">0</div><div class="label">今日新增用户</div></div>
+    <div class="stat"><div class="num" th:text="${familyCount}">0</div><div class="label">圈层总数</div></div>
+    <div class="stat"><div class="num" th:text="${pendingCount}">0</div><div class="label">待审批成员</div></div>
+    <div class="stat"><div class="num" th:text="${commentCount}">0</div><div class="label">评论总数</div></div>
+  </div>
+  <div class="card" style="padding: 20px; color: var(--sub); line-height: 1.9; font-size: 14px;">
+    操作提示：<br>
+    · 菜谱管理：可上下架（下架后从广场消失）与删除<br>
+    · 首页 Banner：创建 ON 状态 + 投放时间窗内的 Banner，小程序广场页自动轮播展示（无推送不占位）<br>
+    · 内容安全：后台配置微信 appid/secret 后，小程序端发布/评论/昵称自动过检
+  </div>
+</main>
+</body>
+</html>

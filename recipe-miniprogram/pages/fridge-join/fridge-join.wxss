@@ -1,0 +1,51 @@
+.join-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 160rpx;
+  text-align: center;
+}
+.join-icon { font-size: 120rpx; line-height: 1; }
+.join-title {
+  margin-top: 40rpx;
+  font-size: 42rpx;
+  font-weight: 800;
+  color: var(--text);
+  letter-spacing: 2rpx;
+}
+.join-state {
+  margin-top: 30rpx;
+  font-size: 30rpx;
+  color: var(--sub);
+  font-weight: 600;
+}
+.join-state.ok { color: var(--ok); }
+.join-state.fail { color: var(--danger); }
+.join-desc {
+  margin-top: 16rpx;
+  font-size: 25rpx;
+  color: var(--sub);
+  line-height: 1.7;
+  padding: 0 60rpx;
+}
+.join-btn-main { margin-top: 60rpx; width: 80%; }
+.join-link {
+  margin-top: 30rpx;
+  font-size: 26rpx;
+  color: var(--accent);
+  padding: 16rpx 30rpx;
+}
+.join-dots {
+  margin-top: 30rpx;
+  display: flex;
+  gap: 14rpx;
+  color: var(--accent);
+  font-size: 22rpx;
+}
+.join-dots text { animation: dotBlink 1.2s infinite; }
+.join-dots text:nth-child(2) { animation-delay: 0.2s; }
+.join-dots text:nth-child(3) { animation-delay: 0.4s; }
+@keyframes dotBlink {
+  0%, 60%, 100% { opacity: 0.25; }
+  30% { opacity: 1; }
+}

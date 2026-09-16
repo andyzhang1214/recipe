@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<!-- 整个 base fragment 即完整 HTML 文档：包含 head+CSS 链接，保证子页面 th:replace 后样式不丢 -->
+<th:block th:fragment="base(active, content)">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>菜谱后台</title>
+  <link rel="stylesheet" th:href="@{/admin.css}">
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar">
+    <div class="brand">🍳 菜谱后台</div>
+    <nav>
+      <a th:classappend="${active == 'dashboard'} ? 'on'" th:href="@{/admin}">仪表盘</a>
+      <a th:classappend="${active == 'recipes'} ? 'on'" th:href="@{/admin/recipes}">菜谱管理</a>
+      <a th:classappend="${active == 'users'} ? 'on'" th:href="@{/admin/users}">用户管理</a>
+      <a th:classappend="${active == 'families'} ? 'on'" th:href="@{/admin/families}">圈层管理</a>
+      <a th:classappend="${active == 'comments'} ? 'on'" th:href="@{/admin/comments}">评论管理</a>
+      <a th:classappend="${active == 'food-calories'} ? 'on'" th:href="@{/admin/food-calories}">热量库</a>
+      <a th:classappend="${active == 'banners'} ? 'on'" th:href="@{/admin/banners}">首页 Banner</a>
+    </nav>
+    <form class="logout" method="post" th:action="@{/admin/logout}">
+      <button type="submit">退出登录</button>
+    </form>
+  </aside>
+  <main class="content">
+    <th:block th:replace="${content}"/>
+  </main>
+</div>
+</body>
+</th:block>
+</html>

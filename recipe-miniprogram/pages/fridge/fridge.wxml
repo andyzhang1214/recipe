@@ -1,0 +1,198 @@
+<view class="page theme-{{theme}} bg-{{skinBg}}" style="{{bgStyle}}">
+  <nav-bar title="{{navTitle}}" back="{{true}}" theme="{{theme}}" />
+  <view class="page-content">
+    <view class="page-header header-only-sub">
+      <view class="h-sub">{{familyId ? '队伍食材共管，临期一目了然' : (ownerId ? '共享冰箱，和 TA 一起管理食材' : '临期食材一目了然，别让美味过期')}}</view>
+    </view>
+
+    <!-- 功能入口：邀请共用（个人冰箱）/ 共享冰箱切换 / 操作记录 -->
+    <view class="fr-tools">
+      <view class="fr-tool" wx:if="{{!familyId && !ownerId}}" hover-class="fr-tool-press" bindtap="openInvite">
+        <text class="fr-tool-icon">🤝</text>
+        <text class="fr-tool-text">邀请共用</text>
+      </view>
+      <view class="fr-tool" wx:if="{{!familyId && !ownerId}}" hover-class="fr-tool-press" bindtap="openShared">
+        <text class="fr-tool-icon">📥</text>
+        <text class="fr-tool-text">共享给我的</text>
+      </view>
+      <view class="fr-tool" hover-class="fr-tool-press" bindtap="openLogs">
+        <text class="fr-tool-icon">📋</text>
+        <text class="fr-tool-text">操作记录</text>
+      </view>
+    </view>
+
+    <!-- 临期/过期聚合提醒：点击查看全部临期物品 -->
+    <view class="alert-bar {{expiredCount > 0 ? 'danger' : ''}}" wx:if="{{expiredCount > 0 || urgentCount > 0}}"
+          hover-class="alert-press" bindtap="openUrgent">
+      <view class="alert-dot"></view>
+      <view class="alert-text">
+        <text wx:if="{{expiredCount > 0}}" class="alert-strong">{{expiredCount}} 件已过期</text>
+        <text wx:if="{{expiredCount > 0 && urgentCount > 0}}"> · </text>
+        <text wx:if="{{urgentCount > 0}}" class="alert-strong">{{urgentCount}} 件即将过期</text>
+        <text>，记得及时处理哦</text>
+      </view>
+      <view class="alert-action">点击查看 ›</view>
+    </view>
+
+    <!-- 分类筛选：全部 + 各分类 + 临期，横向滑动 -->
+    <scroll-view class="cat-filter" scroll-x enable-flex>
+      <view class="cf-chip {{activeCategory === '' ? 'on' : ''}}" hover-class="cf-press" data-cat="" bindtap="onFilter">全部</view>
+      <view class="cf-chip {{activeCategory === item ? 'on' : ''}}" wx:for="{{categories}}" wx:key="*this"
+            hover-class="cf-press" data-cat="{{item}}" bindtap="onFilter">{{item}}</view>
+      <view class="cf-chip {{activeCategory === 'URGENT' ? 'on urgent' : ''}}" hover-class="cf-press" data-cat="URGENT" bindtap="onFilter">
+        临期{{expiredCount + urgentCount > 0 ? '(' + (expiredCount + urgentCount) + ')' : ''}}
+      </view>
+    </scroll-view>
+
+    <!-- 食材卡片网格 -->
+    <view class="fg-grid">
+      <view class="fg-card" wx:for="{{list}}" wx:key="id" hover-class="fg-press">
+        <view class="fg-photo-box">
+          <image wx:if="{{item.photoUrl}}" class="fg-photo" src="{{item.photoUrl}}" mode="aspectFill" lazy-load />
+          <view wx:else class="fg-emoji">{{item.catEmoji}}</view>
+          <view class="fg-status {{item.level === 0 ? 's-red' : (item.level === 1 ? 's-orange' : (item.level === 2 ? 's-green' : 's-gray'))}}">
+            <text class="fg-status-dot"></text>{{item.label}}
+          </view>
+          <view class="fg-del" data-id="{{item.id}}" catchtap="onDelete">删除</view>
+        </view>
+        <view class="fg-body">
+          <view class="fg-name">{{item.name}}</view>
+          <view class="fg-meta">{{item.category || '未分类'}} · {{item.expiryShort}}</view>
+          <view class="fg-note" wx:if="{{item.note}}">{{item.note}}</view>
+        </view>
+      </view>
+    </view>
+    <view class="empty" wx:if="{{list.length === 0}}">
+      <text class="empty-icon">🧊</text>
+      {{activeCategory === 'URGENT' ? '没有临期物品，食材都很新鲜' : (activeCategory ? '「' + activeCategory + '」分类下暂无食材' : (familyId ? '队伍冰箱空空，点击下方录入食材' : '冰箱空空，点击下方录入食材'))}}
+    </view>
+
+    <view class="add-btn" bindtap="openForm">＋ 录入食材</view>
+
+    <view class="mask" wx:if="{{showForm}}" bindtap="closeForm" />
+    <view class="sheet" wx:if="{{showForm}}">
+      <view class="sheet-title">放入冰箱</view>
+      <input class="input" placeholder="名称，如：鲜牛奶" data-key="name" bindinput="onField" value="{{form.name}}" />
+      <view class="sheet-label">分类</view>
+      <view class="cats">
+        <view class="cat {{categoryIndex === index ? 'active' : ''}}" wx:for="{{categories}}" wx:key="*this"
+              data-idx="{{index}}" bindtap="onCategory">{{item}}</view>
+      </view>
+      <view class="sheet-label">数量</view>
+      <view class="row">
+        <input class="input col" type="digit" placeholder="数量" data-key="quantity" bindinput="onField" value="{{form.quantity}}" />
+        <input class="input col" placeholder="单位（盒/个/袋）" data-key="unit" bindinput="onField" value="{{form.unit}}" />
+      </view>
+      <view class="sheet-label">保质期录入方式</view>
+      <radio-group bindchange="onMode">
+        <label class="radio"><radio value="date" checked="{{form.mode === 'date'}}" color="#E8643E" />选择到期日</label>
+        <label class="radio"><radio value="days" checked="{{form.mode === 'days'}}" color="#E8643E" />填保质期天数</label>
+      </radio-group>
+      <picker wx:if="{{form.mode === 'date'}}" mode="date" data-key="expiryDate" bindchange="onField">
+        <view class="input">{{form.expiryDate || '选择到期日'}} ▾</view>
+      </picker>
+      <input wx:else class="input" type="number" placeholder="保质期天数，如 7" data-key="validDays" bindinput="onField" value="{{form.validDays}}" />
+      <view class="sheet-label">提前提醒天数（默认3）</view>
+      <input class="input" type="number" placeholder="默认 3" data-key="reminderDays" bindinput="onField" value="{{form.reminderDays}}" />
+      <view class="sheet-label">备注</view>
+      <view class="note-row">
+        <input class="input note-input" placeholder="备注，如：买于永辉" data-key="note" bindinput="onField" value="{{form.note}}" />
+        <image wx:if="{{form.photoUrl}}" class="photo-thumb" src="{{form.photoUrl}}" mode="aspectFill" lazy-load data-key="photoUrl" bindtap="onTakePhoto" />
+        <text class="photo-btn" wx:else bindtap="onTakePhoto">拍照备注</text>
+      </view>
+      <button class="btn btn-primary sheet-btn" bindtap="submit">放入冰箱</button>
+    </view>
+
+    <!-- 邀请共用弹层：生成邀请码 / 分享微信（结构与队伍页统一） -->
+    <view class="mask" wx:if="{{showInvite}}" bindtap="closeInvite" />
+    <view class="sheet" wx:if="{{showInvite}}">
+      <view class="sheet-title">邀请共用我的冰箱</view>
+      <view class="sheet-sub">被邀请人可查看并记录你的食材</view>
+
+      <!-- 方式一：生成邀请码（点击展开有效期与生成） -->
+      <view class="inv-card" hover-class="inv-press" bindtap="toggleCodeMode">
+        <view class="inv-ic">🔗</view>
+        <view class="inv-main">
+          <view class="inv-name">生成邀请码</view>
+          <view class="inv-desc">有效期可选，凭码直接共用</view>
+        </view>
+        <view class="inv-chev {{showCodeGen ? 'open' : ''}}" />
+      </view>
+
+      <view class="inv-panel" wx:if="{{showCodeGen}}">
+        <view class="inv-panel-row">
+          <text class="inv-panel-label">有效期</text>
+          <view class="seg">
+            <view class="seg-item {{inviteValidDays === 1 ? 'active' : ''}}" data-days="1" catchtap="onSegDays">1天</view>
+            <view class="seg-item {{inviteValidDays === 7 ? 'active' : ''}}" data-days="7" catchtap="onSegDays">7天</view>
+            <view class="seg-item {{inviteValidDays === 30 ? 'active' : ''}}" data-days="30" catchtap="onSegDays">30天</view>
+          </view>
+        </view>
+        <button class="btn btn-primary inv-gen" bindtap="genInvite" loading="{{inviteCreating}}">生成邀请码</button>
+        <view class="ticket" wx:if="{{inviteToken}}" hover-class="ticket-press" bindtap="copyInvite">
+          <view class="tk-code">{{inviteToken}}</view>
+          <view class="tk-meta">有效期至 {{inviteExpires}}</view>
+          <view class="tk-hint">点击复制</view>
+        </view>
+      </view>
+
+      <!-- 方式二：分享到微信（好友点开卡片即共用）
+           覆盖层模式：view 承担卡片外形，原生 button 只做铺满卡片的透明点击层 -->
+      <view class="inv-card share">
+        <view class="inv-ic">💬</view>
+        <view class="inv-main">
+          <view class="inv-name">分享到微信</view>
+          <view class="inv-desc">发送卡片给好友，点开即直接共用</view>
+        </view>
+        <view class="inv-go" />
+        <button class="inv-share-btn" open-type="share" hover-class="inv-press" />
+      </view>
+    </view>
+
+    <!-- 操作记录弹层 -->
+    <view class="mask" wx:if="{{showLogs}}" bindtap="closeLogs" />
+    <view class="sheet" wx:if="{{showLogs}}">
+      <view class="sheet-title">操作记录</view>
+      <view class="log-list">
+        <view class="log-item" wx:for="{{logs}}" wx:key="id">
+          <view class="log-avatar-box">
+            <image wx:if="{{item.operatorAvatar}}" class="log-avatar" src="{{item.operatorAvatar}}" mode="aspectFill" />
+            <view wx:else class="log-avatar ph">{{item.operatorChar}}</view>
+          </view>
+          <view class="log-main">
+            <view class="log-text">
+              <text class="log-op">{{item.operatorName}}</text>
+              <text class="log-action {{item.action === 'DELETE' ? 'del' : (item.action === 'ADD' ? 'add' : '')}}">{{item.actionText}}</text>
+              <text class="log-item-name">「{{item.itemName}}」</text>
+            </view>
+            <view class="log-meta">{{item.timeShort}}{{item.detail ? ' · ' + item.detail : ''}}</view>
+          </view>
+        </view>
+      </view>
+      <view class="empty small" wx:if="{{logs.length === 0}}">暂无操作记录</view>
+    </view>
+
+    <!-- 共享给我的冰箱列表 -->
+    <view class="mask" wx:if="{{showShared}}" bindtap="closeShared" />
+    <view class="sheet" wx:if="{{showShared}}">
+      <view class="sheet-title">共享给我的冰箱</view>
+      <view class="shared-list">
+        <view class="shared-item" wx:for="{{sharedFridges}}" wx:key="ownerId"
+              hover-class="fr-tool-press" data-id="{{item.ownerId}}" data-name="{{item.ownerName}}" bindtap="onSharedTap">
+          <view class="log-avatar-box">
+            <image wx:if="{{item.ownerAvatar}}" class="log-avatar" src="{{item.ownerAvatar}}" mode="aspectFill" />
+            <view wx:else class="log-avatar ph">{{item.ownerChar}}</view>
+          </view>
+          <view class="log-main">
+            <view class="log-text">{{item.ownerName || '好友'}}的冰箱</view>
+            <view class="log-meta">点击进入查看和管理</view>
+          </view>
+          <view class="chevron">›</view>
+        </view>
+      </view>
+      <view class="empty small" wx:if="{{sharedFridges.length === 0}}">还没有人共享冰箱给你，向好友要一个邀请码吧</view>
+    </view>
+  </view>
+
+  <login-popup id="login-popup" bindlogined="onLogined" />
+</view>

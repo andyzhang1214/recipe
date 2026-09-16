@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "发布菜谱",
+  "usingComponents": {
+    "nav-bar": "/components/nav-bar/nav-bar"
+  },
+  "navigationStyle": "custom"
+}

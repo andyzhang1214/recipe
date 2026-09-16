@@ -1,0 +1,188 @@
+/* 队伍列表页：菜品式卡片（封面图 + 队伍名/人数一行），长按拖拽自定义排序 */
+/* 底部预留：固定按钮(约100rpx) + tabBar 让位(100rpx+safe-area) + 间距 */
+.page-content { padding-bottom: 300rpx; }
+
+/* 队伍卡片网格：双列卡片 */
+/* 不用 gap：calc(50%-12rpx)+gap=恰好100%，窄屏/部分密度下亚像素舍入会把第二张卡挤成单列（冰箱/广场页同款坑），space-between 吸收余量 */
+.f-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+.f-card {
+  position: relative;
+  width: calc(50% - 12rpx);
+  margin-bottom: 24rpx;
+  box-sizing: border-box;
+  background: var(--card);
+  border-radius: var(--radius-card);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  border: var(--card-outline);
+}
+.f-press { transform: scale(0.97); opacity: 0.85; }
+
+/* ---- 卡片内容（模板共用） ---- */
+/* 封面：队伍头像铺满，接近方形，像菜品卡片 */
+.fc-cover-box {
+  position: relative;
+  width: 100%;
+  height: 330rpx;
+  flex-shrink: 0;
+  background: var(--fill);
+}
+.fc-cover {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+/* 无头像占位：角色渐变 + 队名首字 */
+.fc-ph {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.fc-ph-char {
+  font-size: 80rpx;
+  font-weight: 800;
+  color: #fff;
+  line-height: 1;
+  text-shadow: 0 4rpx 14rpx rgba(0, 0, 0, 0.18);
+}
+.f-owner { background: linear-gradient(135deg, #F5A864, #E86A3E); }
+.f-admin { background: linear-gradient(135deg, #7FB6E8, #4A86C8); }
+.f-member { background: linear-gradient(135deg, #A8C79A, #6FA35E); }
+
+/* 信息区：队伍名 + 人数同一行（左名右数，像菜品卡标题行） */
+.fc-body {
+  padding: 20rpx 24rpx 24rpx;
+}
+.fc-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16rpx;
+}
+.fc-name {
+  flex: 1;
+  min-width: 0;
+  font-size: 29rpx;
+  font-weight: 700;
+  color: var(--text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.fc-count {
+  flex-shrink: 0;
+  font-size: 22rpx;
+  color: var(--sub);
+  line-height: 1;
+}
+.fc-count .n {
+  font-size: 32rpx;
+  font-weight: 800;
+  color: var(--accent);
+  font-family: 'DIN Alternate', -apple-system, 'PingFang SC', sans-serif;
+}
+
+/* 身份角标：浮在封面右上，白色半透明底保证图片上可读 */
+.fc-role {
+  position: absolute;
+  top: 16rpx;
+  right: 16rpx;
+  font-size: 20rpx;
+  font-weight: 600;
+  color: rgba(60, 42, 24, 0.85);
+  background: rgba(255, 255, 255, 0.88);
+  border-radius: 999rpx;
+  padding: 6rpx 16rpx;
+  letter-spacing: 1rpx;
+  z-index: 2;
+  box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.12);
+}
+
+/* ---- 长按拖拽排序 ---- */
+/* 被拖拽的原卡片：占位隐藏 */
+.drag-src { visibility: hidden; }
+/* 跟随手指的悬浮卡片 */
+.float-card {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 999;
+  transform: translate(-50%, -60%) scale(1.06);
+  pointer-events: none;
+  box-shadow: var(--shadow-lg);
+}
+/* 拖拽中顶部提示 */
+.drag-tip {
+  position: fixed;
+  top: 24rpx;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  font-size: 24rpx;
+  color: #fff;
+  background: rgba(47, 42, 38, 0.8);
+  border-radius: 999rpx;
+  padding: 12rpx 32rpx;
+  letter-spacing: 1rpx;
+  white-space: nowrap;
+}
+
+/* ---- 创建弹窗：头像选择 ---- */
+.av-picker {
+  display: flex;
+  justify-content: center;
+  margin: 8rpx 0 20rpx;
+}
+.av-img {
+  width: 150rpx;
+  height: 150rpx;
+  border-radius: 50%;
+  border: 4rpx solid var(--card);
+  box-shadow: var(--shadow);
+}
+.av-ph {
+  width: 150rpx;
+  height: 150rpx;
+  border-radius: 50%;
+  border: 3rpx dashed var(--accent);
+  background: var(--accent-grad-soft);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4rpx;
+}
+.av-plus { font-size: 44rpx; color: var(--accent); font-weight: 600; line-height: 1; }
+.av-tip { font-size: 21rpx; color: var(--sub); }
+
+/* 底部双按钮：钉在页面最下方（原生 tabBar 之上） */
+/* 写一个不含 env() 的兜底值：老基础库解析不了 env() 时 bottom 会整体失效，
+   按钮回落到文档流位置（页面顶部），所以必须先给纯 rpx 兜底再覆盖 */
+.fab-group {
+  position: fixed;
+  bottom: 170rpx;
+  bottom: calc(150rpx + env(safe-area-inset-bottom));
+  left: 28rpx;
+  right: 28rpx;
+  display: flex;
+  gap: 20rpx;
+  z-index: 10;
+}
+.fab { flex: 1; }
+.fab-group .fab { box-shadow: var(--shadow-lg); }
+
+.sheet-title { font-size: 34rpx; font-weight: 700; color: var(--text); text-align: center; margin-bottom: 32rpx; }
+.sheet-label { font-size: 26rpx; color: var(--sub); margin: 28rpx 0 16rpx; font-weight: 500; }
+.sheet-btn { width: 100%; margin-top: 40rpx; }
+
+/* TabBar 页面：底部弹层让出悬浮胶囊（同样带纯 rpx 兜底） */
+.sheet {
+  bottom: 160rpx;
+  bottom: calc(150rpx + env(safe-area-inset-bottom));
+}

@@ -1,0 +1,122 @@
+/* 烹饪倒计时 */
+.timer { display: flex; justify-content: space-between; align-items: center; }
+.t-info { flex: 1; min-width: 0; }
+.timer.running { border: 2rpx solid var(--accent-weak); background: var(--accent-grad-soft); }
+.t-name { font-size: 27rpx; color: var(--sub); font-weight: 500; }
+.t-time {
+  font-size: 72rpx;
+  font-weight: 700;
+  margin-top: 10rpx;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 2rpx;
+  line-height: 1;
+}
+.t-time.running {
+  color: var(--accent);
+  text-shadow: 0 6rpx 24rpx var(--glow);
+}
+.t-ops { display: flex; flex-direction: column; gap: 14rpx; align-items: flex-end; }
+.op {
+  font-size: 25rpx;
+  color: var(--accent);
+  padding: 10rpx 30rpx;
+  border: 2rpx solid var(--accent);
+  border-radius: var(--radius-btn);
+  font-weight: 600;
+  background: transparent;
+}
+.op.pause { color: var(--warn); border-color: var(--warn); background: var(--warn-weak); border: none; }
+.op.del { color: var(--danger); border-color: var(--danger); background: var(--danger-weak); border: none; }
+
+/* ===== 添加计时器：名称 + 时分秒三段 + 底部整宽按钮 ===== */
+.add-form { display: flex; flex-direction: column; gap: 24rpx; }
+.a-name { width: 100%; box-sizing: border-box; height: 92rpx; line-height: 92rpx; padding: 0 28rpx; }
+
+/* placeholder 不跟随 input 字号/颜色，必须用 placeholder-class 显式指定 */
+.ph-txt { color: var(--sub); font-size: 27rpx; }
+.ph-num { color: var(--sub); font-size: 40rpx; font-weight: 800; letter-spacing: 1rpx; }
+
+.dur-row { display: flex; align-items: flex-start; gap: 14rpx; }
+.dur-cell { flex: 1; min-width: 0; display: flex; flex-direction: column; align-items: center; gap: 10rpx; }
+/* 小程序 input 定高必须配同值 line-height 才能垂直居中，padding 归零 */
+.dur-cell .input { width: 100%; box-sizing: border-box; text-align: center; height: 92rpx; line-height: 92rpx; padding: 0; }
+.a-num { font-size: 40rpx; font-weight: 800; font-variant-numeric: tabular-nums; letter-spacing: 1rpx; }
+.dur-cap { font-size: 22rpx; color: var(--sub); font-weight: 600; }
+.dur-colon {
+  font-size: 44rpx;
+  font-weight: 800;
+  color: var(--sub);
+  line-height: 92rpx;
+  align-self: flex-start;
+  opacity: 0.6;
+  flex-shrink: 0;
+}
+
+.a-btn { width: 100%; }
+/* 保存为常用预设：显式勾选框，点击区收窄为居中胶囊，不再整行隐形可点 */
+.save-preset-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12rpx;
+  align-self: center;
+  padding: 10rpx 30rpx;
+  border-radius: var(--radius-btn);
+  background: var(--fill);
+  border: 2rpx solid var(--border);
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+.spr-hover { opacity: 0.75; }
+.sp-box {
+  width: 32rpx;
+  height: 32rpx;
+  border-radius: 8rpx;
+  border: 3rpx solid var(--sub);
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--card);
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+.sp-check { font-size: 22rpx; line-height: 1; color: #fff; font-weight: 700; }
+.sp-label { font-size: 25rpx; color: var(--sub); font-weight: 500; }
+.save-preset-row.on {
+  background: var(--accent-weak);
+  border-color: var(--accent);
+}
+.save-preset-row.on .sp-box { background: var(--accent); border-color: var(--accent); }
+.save-preset-row.on .sp-label { color: var(--accent); font-weight: 600; }
+
+/* ===== 常用预设：用户自定义列表，可改可删 ===== */
+.presets { display: flex; flex-direction: column; gap: 18rpx; }
+.preset {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+  background: var(--card2);
+  border-radius: var(--radius-card);
+  padding: 24rpx 28rpx;
+  border: var(--card-outline);
+  transition: transform 0.16s ease;
+}
+.preset-press { transform: scale(0.97); opacity: 0.85; }
+.p-main { flex: 1; min-width: 0; }
+.p-name { font-size: 29rpx; font-weight: 700; color: var(--text); }
+.p-min { font-size: 23rpx; color: var(--accent); margin-top: 6rpx; font-weight: 600; }
+.p-ops { display: flex; gap: 14rpx; flex-shrink: 0; }
+.p-op {
+  font-size: 23rpx;
+  color: var(--accent);
+  padding: 8rpx 22rpx;
+  border: 2rpx solid var(--accent);
+  border-radius: var(--radius-btn);
+  font-weight: 600;
+}
+.p-op.del { color: var(--danger); border-color: var(--danger); background: var(--danger-weak); border: none; }
+
+/* 预设编辑弹层 */
+.pf-name { width: 100%; box-sizing: border-box; height: 92rpx; line-height: 92rpx; padding: 0 28rpx; margin-bottom: 24rpx; }
+.pf-dur { margin-bottom: 8rpx; }
+.sheet-btn { width: 100%; margin-top: 32rpx; }

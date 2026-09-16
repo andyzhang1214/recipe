@@ -1,0 +1,76 @@
+<view class="page theme-{{theme}}">
+  <nav-bar title="隐私政策" back="{{true}}" theme="{{theme}}" />
+  <view class="container">
+    <view class="title">隐私政策</view>
+    <view class="subtitle">最后更新：2026 年 8 月 21 日</view>
+
+    <view class="section">
+      <view class="h2">一、概述</view>
+      <view class="p">"暖暖的餐桌"小程序（以下简称"本小程序"）由个人开发者独立开发。本隐私政策旨在向您说明在您使用本小程序时，我们如何收集、使用、存储和保护您的个人信息。请您仔细阅读本政策。一旦您开始使用本小程序，即视为您已阅读、理解并同意接受本政策的全部条款。</view>
+    </view>
+
+    <view class="section">
+      <view class="h2">二、我们收集的信息</view>
+      <view class="h3">2.1 您主动提供的信息</view>
+      <view class="li">（1）微信头像与昵称：用于在菜谱广场展示您的发布者身份；</view>
+      <view class="li">（2）菜谱内容：包括菜谱标题、描述、食材清单、烹饪步骤、封面图、步骤图；</view>
+      <view class="li">（3）评论与评分：您对其他菜谱发表的评论及打分；</view>
+      <view class="li">（4）冰箱食材记录：您自主录入的食材名称与分类；</view>
+      <view class="li">（5）家庭圈层信息：家庭名称、邀请码、成员邀请关系。</view>
+
+      <view class="h3">2.2 您使用本小程序时系统自动采集的信息</view>
+      <view class="li">（1）微信 openid：用于识别您的账号身份，由微信官方机制下发；</view>
+      <view class="li">（2）设备与日志信息：仅在必要时（如故障排查、内容安全审核）由微信云托管平台记录。</view>
+    </view>
+
+    <view class="section">
+      <view class="h2">三、信息的使用方式</view>
+      <view class="p">我们严格基于为您提供服务的目的使用您的个人信息，主要包括：</view>
+      <view class="li">1. 实现菜谱发布、浏览、收藏、评论、评分、家庭圈层等核心功能；</view>
+      <view class="li">2. 通过微信官方内容安全接口对您发布的文字与图片进行合规审核，拦截违规内容；</view>
+      <view class="li">3. 故障排查、安全事件响应与系统运维；</view>
+      <view class="p">我们承诺：不会将您的个人信息用于本小程序功能以外的其他商业用途，不会向任何第三方出售或提供您的个人信息。</view>
+    </view>
+
+    <view class="section">
+      <view class="h2">四、信息的存储</view>
+      <view class="p">您的个人信息存储在中华人民共和国境内的腾讯云托管 MySQL 数据库中，存储位置为广州地域。开发者承诺采取符合业界标准的安全措施保护您的数据，包括但不限于：传输加密（HTTPS）、访问控制、最小权限原则。</view>
+    </view>
+
+    <view class="section">
+      <view class="h2">五、信息的共享与披露</view>
+      <view class="p">除下列情况外，我们不会与任何第三方共享您的个人信息：</view>
+      <view class="li">1. 获得您的明示同意后；</view>
+      <view class="li">2. 根据法律法规规定或政府主管部门的强制性要求；</view>
+      <view class="li">3. 为完成您主动发起的家庭圈层邀请、家庭成员加入等必要交互；</view>
+      <view class="li">4. 由微信云托管服务（提供运行环境）、腾讯云对象存储 COS（存储您上传的图片）等基础设施服务商在为您提供服务的范围内接触信息。</view>
+      <view class="p">本小程序为个人作品展示用途，**不接入第三方广告平台、不与第三方共享用户画像或行为数据**。</view>
+    </view>
+
+    <view class="section">
+      <view class="h2">六、您的权利</view>
+      <view class="p">依据相关法律法规，您对自己的个人信息享有以下权利：</view>
+      <view class="li">1. 查阅权：您可在「我的-个人资料」中查看您已发布的菜谱、评论、收藏等内容；</view>
+      <view class="li">2. 更正权：您可在发布菜谱页面编辑或重新发布；</view>
+      <view class="li">3. 删除权：您可随时删除自己发布的菜谱、评论；</view>
+      <view class="li">4. 注销权：如您希望彻底删除账户及全部数据，可通过本小程序的「我的-意见反馈」入口联系开发者，我们将在 7 个工作日内完成核实与清除。</view>
+    </view>
+
+    <view class="section">
+      <view class="h2">七、未成年人保护</view>
+      <view class="p">本小程序面向具备完全民事行为能力的自然人。如您是未成年人，请在监护人陪同下阅读本政策并在监护人明示同意后使用本小程序。我们不会主动收集未成年人的个人信息。</view>
+    </view>
+
+    <view class="section">
+      <view class="h2">八、本政策的更新</view>
+      <view class="p">为给您提供更优质的服务，本政策可能根据业务调整、法律法规变更等情况进行修订，修订后的版本将在本页面发布。继续使用本小程序即视为您接受修订后的政策。</view>
+    </view>
+
+    <view class="section">
+      <view class="h2">九、联系方式</view>
+      <view class="p">如您对本政策有任何疑问、意见或建议，可通过本小程序的「我的-意见反馈」入口向开发者反馈。</view>
+    </view>
+
+    <view class="footer">感谢您对暖暖的餐桌的信任与支持</view>
+  </view>
+</view>

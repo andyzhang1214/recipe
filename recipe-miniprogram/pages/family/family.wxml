@@ -1,0 +1,80 @@
+<!-- 队伍卡片内容模板：网格卡片与拖拽悬浮卡片共用 -->
+<template name="family-card">
+  <view class="fc-cover-box">
+    <image wx:if="{{item.family.avatar}}" class="fc-cover" src="{{item.family.avatar}}" mode="aspectFill" lazy-load />
+    <view wx:else class="fc-cover fc-ph {{item.role === 'OWNER' ? 'f-owner' : (item.role === 'ADMIN' ? 'f-admin' : 'f-member')}}">
+      <text class="fc-ph-char">{{item.nameChar}}</text>
+    </view>
+    <view class="fc-role">{{item.role === 'OWNER' ? '群主' : (item.role === 'ADMIN' ? '管理员' : '成员')}}</view>
+  </view>
+  <view class="fc-body">
+    <view class="fc-row">
+      <text class="fc-name">{{item.family.name}}</text>
+      <text class="fc-count"><text class="n">{{item.family.memberCount}}</text>/{{item.family.maxMembers}}</text>
+    </view>
+  </view>
+</template>
+
+<view class="page theme-{{theme}} bg-{{skinBg}}" style="{{bgStyle}}">
+  <nav-bar title="我的队伍" theme="{{theme}}" />
+  <view class="page-content">
+    <!-- 队伍卡片网格：点击进队伍主页；长按拖动自定义排序 -->
+    <view class="f-grid"
+          bindtouchmove="onCardTouchMove" bindtouchend="onCardTouchEnd" bindtouchcancel="onCardTouchEnd">
+      <view class="f-card {{dragIndex === index ? 'drag-src' : ''}}"
+            wx:for="{{families}}" wx:key="id"
+            data-id="{{item.family.id}}" data-index="{{index}}"
+            hover-class="f-press"
+            bindtap="onCircleTap" bindlongpress="onCardLongPress">
+        <template is="family-card" data="{{item}}" />
+      </view>
+    </view>
+    <view class="empty" wx:if="{{families.length === 0}}">
+      <text class="empty-icon">🏠</text>
+      还没有队伍，创建一个队伍，圈内菜谱仅成员可见
+    </view>
+  </view>
+
+  <!-- 拖拽排序提示 -->
+  <view class="drag-tip" wx:if="{{dragging}}">拖动到目标位置 · 松手保存排序</view>
+
+  <!-- 拖动中的悬浮卡片（跟随手指） -->
+  <view wx:if="{{dragging && floatItem}}" class="f-card float-card"
+        style="left: {{floatX}}px; top: {{floatY}}px; width: {{cardW}}px;">
+    <template is="family-card" data="{{item: floatItem}}" />
+  </view>
+
+  <!-- 底部操作：固定在最下方（tabBar 上方） -->
+  <view class="fab-group">
+    <button class="btn btn-primary fab" bindtap="openCreate">＋ 创建队伍</button>
+    <button class="btn btn-ghost fab" bindtap="openJoin">输入邀请码</button>
+  </view>
+
+  <!-- 创建队伍弹层 -->
+  <view class="mask" wx:if="{{showCreate}}" bindtap="closeCreate" />
+  <view class="sheet" wx:if="{{showCreate}}">
+    <view class="sheet-title">创建队伍</view>
+    <view class="sheet-label">队伍头像</view>
+    <view class="av-picker" bindtap="onPickAvatar">
+      <image wx:if="{{createAvatar}}" class="av-img" src="{{createAvatar}}" mode="aspectFill" />
+      <view wx:else class="av-ph">
+        <text class="av-plus">＋</text>
+        <text class="av-tip">选图片</text>
+      </view>
+    </view>
+    <view class="sheet-label">队伍名称</view>
+    <input class="input" placeholder="给队伍起个名字，如：相亲相爱一家人 / 周末篮球群" bindinput="onCreateName" value="{{createName}}" />
+    <view class="sheet-label">成员上限（1-99，留空默认 99）</view>
+    <input class="input" type="number" placeholder="默认 99" bindinput="onCreateMax" value="{{createMax}}" />
+    <view class="sheet-tip">创建后凭邀请码或微信分享链接即可直接加入</view>
+    <button class="btn btn-primary sheet-btn" bindtap="confirmCreate" loading="{{creating}}">创建</button>
+  </view>
+
+  <!-- 输入邀请码 -->
+  <view class="mask" wx:if="{{showJoin}}" bindtap="closeJoin" />
+  <view class="sheet" wx:if="{{showJoin}}">
+    <view class="sheet-title">凭邀请码加入队伍</view>
+    <input class="input" placeholder="输入邀请码，如 FAM-AB12CD" bindinput="onJoinCode" value="{{joinCode}}" />
+    <button class="btn btn-primary sheet-btn" bindtap="confirmJoin">立即加入</button>
+  </view>
+</view>

@@ -1,0 +1,36 @@
+<view class="page theme-{{theme}} bg-{{skinBg}}" style="{{bgStyle}}">
+  <nav-bar title="加入共享冰箱" back="{{true}}" theme="{{theme}}" />
+  <view class="page-content join-content">
+    <view class="join-icon">🧊</view>
+    <view class="join-title">冰箱共享邀请</view>
+
+    <!-- 加载中 -->
+    <block wx:if="{{loading}}">
+      <view class="join-state">{{message}}</view>
+      <view class="join-dots"><text>●</text><text>●</text><text>●</text></view>
+    </block>
+
+    <!-- 加入成功 -->
+    <block wx:elif="{{joined}}">
+      <view class="join-state ok">{{message}}</view>
+      <view class="join-desc">{{ownerName}}的冰箱已向你开放，可以一起管理食材啦</view>
+      <button class="btn btn-primary join-btn-main" bindtap="enterFridge">进入冰箱</button>
+      <view class="join-link" bindtap="backHome">回到首页</view>
+    </block>
+
+    <!-- 失败 -->
+    <block wx:elif="{{failed}}">
+      <view class="join-state fail">{{message}}</view>
+      <view class="join-desc">邀请码可能已过期或被作废，请联系对方重新生成</view>
+      <view class="join-link" bindtap="backHome">回到首页</view>
+    </block>
+
+    <!-- 未登录 -->
+    <block wx:else>
+      <view class="join-state">登录后即可加入共享冰箱</view>
+      <button class="btn btn-primary join-btn-main" bindtap="onLoginTap">立即登录</button>
+    </block>
+  </view>
+
+  <login-popup id="login-popup" bindlogined="onLogined" />
+</view>

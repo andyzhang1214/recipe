@@ -1,0 +1,43 @@
+<view class="page theme-{{theme}} bg-{{skinBg}}" style="{{bgStyle}}">
+  <nav-bar title="待学习菜谱" back="{{true}}" theme="{{theme}}" />
+  <view class="page-content">
+
+    <!-- 顶部统计卡 -->
+    <view class="card learn-hero">
+      <view class="hero-icon">📖</view>
+      <view class="hero-main">
+        <view class="hero-title">学做菜清单</view>
+        <view class="hero-sub">{{list.length ? '正在学 ' + list.length + ' 道菜' : '还没有想学的菜'}}</view>
+      </view>
+    </view>
+
+    <!-- 学习列表 -->
+    <view class="card" wx:if="{{list.length > 0}}">
+      <view class="lr-item" wx:for="{{list}}" wx:key="id">
+        <view class="lr-no">{{item.no}}</view>
+        <view class="lr-info">
+          <view class="lr-dish">{{item.dishName}}</view>
+          <view class="lr-meta">
+            <text wx:if="{{item.sourceFamilyName}}" class="lr-from">来自「{{item.sourceFamilyName}}」</text>
+            <text wx:if="{{item.dateText}}" class="lr-date">{{item.dateText}}</text>
+          </view>
+        </view>
+        <view class="lr-ops">
+          <view class="lr-btn go" hover-class="lr-press" data-id="{{item.id}}" data-dish="{{item.dishName}}" bindtap="goPublish">去发布</view>
+          <view class="lr-btn del" hover-class="lr-press" data-id="{{item.id}}" bindtap="onRemove">移除</view>
+        </view>
+      </view>
+      <view class="lr-tip">学会后点「去发布」写下你的做法，会自动移出清单</view>
+    </view>
+
+    <!-- 空态 -->
+    <view class="card" wx:if="{{!loading && list.length === 0}}">
+      <view class="empty">
+        <text class="empty-icon">📖</text>
+        清单空空的
+        <view class="empty-sub">去队伍主页的心愿单看看大家想吃什么，点「我也不会」就会出现在这里</view>
+      </view>
+    </view>
+
+  </view>
+</view>

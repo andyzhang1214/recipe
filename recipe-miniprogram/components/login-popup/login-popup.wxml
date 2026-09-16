@@ -1,0 +1,27 @@
+<view class="mask" wx:if="{{visible}}" bindtap="hide" />
+<view class="popup theme-{{theme}}" wx:if="{{visible}}">
+
+  <!-- 静默登录检测中：区分新老用户 -->
+  <view class="checking" wx:if="{{checking}}">
+    <view class="spinner" />
+    <text class="checking-text">微信登录中…</text>
+  </view>
+
+  <!-- 新用户：收集头像昵称后完成注册 -->
+  <block wx:else>
+    <button class="avatar-btn" open-type="chooseAvatar" bindchooseavatar="onChooseAvatar">
+      <image wx:if="{{avatar}}" class="avatar" src="{{avatar}}" mode="aspectFill" lazy-load />
+      <text wx:else class="avatar-plus">＋</text>
+    </button>
+
+    <input class="input nickname" type="nickname" placeholder="输入昵称" bindblur="onNickname" value="{{nickname}}" />
+
+    <button class="btn btn-primary confirm" bindtap="onConfirm" loading="{{loading}}">完成注册</button>
+    <view class="agree">
+      登录即代表同意
+      <text class="link" data-type="agreement" bindtap="onAgreement">《用户协议》</text>
+      与
+      <text class="link" data-type="privacy" bindtap="onAgreement">《隐私政策》</text>
+    </view>
+  </block>
+</view>

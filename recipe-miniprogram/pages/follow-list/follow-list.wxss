@@ -1,0 +1,100 @@
+/* ===== 顶部分段器 ===== */
+.seg-wrap { padding: 24rpx 32rpx 8rpx; }
+.seg {
+  display: flex;
+  background: var(--card);
+  border-radius: var(--radius-btn);
+  padding: 8rpx;
+  box-shadow: var(--shadow-sm);
+}
+.seg-item {
+  flex: 1;
+  text-align: center;
+  font-size: 28rpx;
+  color: var(--sub);
+  padding: 16rpx 0;
+  border-radius: var(--radius-tag);
+  transition: all 0.18s ease;
+  font-weight: 500;
+}
+.seg-item.active {
+  background: var(--accent-grad);
+  color: var(--btn-text);
+  font-weight: 700;
+  box-shadow: 0 6rpx 16rpx var(--glow);
+}
+
+/* ===== 用户列表 ===== */
+.u-cell {
+  display: flex;
+  align-items: center;
+  gap: 22rpx;
+  padding: 26rpx 28rpx;
+  border-bottom: 1rpx solid var(--border);
+}
+.u-cell:last-child { border-bottom: none; }
+.u-avatar {
+  width: 92rpx;
+  height: 92rpx;
+  border-radius: 50%;
+  background: var(--fill);
+  flex-shrink: 0;
+  box-shadow: var(--shadow-sm);
+}
+.u-avatar-ph {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 34rpx;
+  font-weight: 700;
+  color: var(--btn-text);
+  background: var(--accent-grad);
+}
+.u-main { flex: 1; min-width: 0; }
+.u-name {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.u-meta {
+  margin-top: 8rpx;
+  font-size: 24rpx;
+  color: var(--sub);
+}
+
+/* 行内关注按钮 */
+.u-follow {
+  flex-shrink: 0;
+  min-width: 132rpx;
+  height: 60rpx;
+  line-height: 56rpx;
+  font-size: 25rpx;
+  border-radius: var(--radius-btn);
+  padding: 0 28rpx;
+  margin: 0;
+  background: var(--accent-grad);
+  color: var(--btn-text);
+  font-weight: 600;
+  box-shadow: 0 6rpx 16rpx var(--glow);
+}
+.u-follow.on {
+  background: var(--fill);
+  color: var(--sub);
+  box-shadow: none;
+  font-weight: 500;
+}
+.u-follow::after { border: none; }
+.u-self {
+  flex-shrink: 0;
+  font-size: 24rpx;
+  color: var(--sub);
+  background: var(--fill);
+  border-radius: var(--radius-btn);
+  padding: 8rpx 22rpx;
+}
